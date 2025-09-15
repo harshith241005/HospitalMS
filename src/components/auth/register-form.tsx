@@ -5,6 +5,14 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { 
+  createUserWithEmailAndPassword, 
+  GoogleAuthProvider, 
+  signInWithPopup 
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
+
 
 import { Button } from '@/components/ui/button';
 import {
@@ -33,6 +41,7 @@ const formSchema = z.object({
 
 export default function RegisterForm() {
   const router = useRouter();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,13 +51,39 @@ export default function RegisterForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Simulate registration logic
-    console.log(values);
-    // In a real app, you'd call your auth provider here.
-    // On success, redirect to the dashboard.
-    router.push('/dashboard');
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await createUserWithEmailAndPassword(auth, values.email, values.password);
+      // After successful registration, you might want to store the user's name
+      // in your database. For this example, we'll just redirect.
+      router.push('/dashboard');
+    } catch (error: any) {
+      console.error('Registration error:', error.message);
+      toast({
+        variant: 'destructive',
+        title: 'Registration Failed',
+        description: error.message,
+      });
+    }
   }
+
+  async function handleGoogleSignIn() {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      // You can add custom logic here after a successful sign-in.
+      // For now, we'll just redirect to the dashboard.
+      router.push('/dashboard');
+    } catch (error: any) {
+      console.error('Google Sign-In Error:', error.message);
+       toast({
+        variant: 'destructive',
+        title: 'Google Sign-In Failed',
+        description: error.message,
+      });
+    }
+  }
+
 
   return (
     <Card className="w-full">
@@ -113,7 +148,7 @@ export default function RegisterForm() {
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <Button variant="outline">
+          <Button variant="outline" onClick={handleGoogleSignIn}>
             <svg role="img" viewBox="0 0 24 24" className="mr-2 h-4 w-4">
               <path
                 fill="currentColor"

@@ -4,6 +4,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import Link from 'next/link';
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  GoogleAuthProvider, 
+  signInWithPopup 
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -30,6 +38,7 @@ const formSchema = z.object({
 
 export default function LoginForm() {
   const router = useRouter();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,18 +47,43 @@ export default function LoginForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Simulate login logic
-    console.log(values);
-    // In a real app, you'd call your auth provider here.
-    // On success, redirect to the dashboard.
-    // We'll simulate a role-based redirect.
-    if (values.email.includes('admin')) {
-      router.push('/admin');
-    } else if (values.email.includes('doctor')) {
-      router.push('/doctor');
-    } else {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await signInWithEmailAndPassword(auth, values.email, values.password);
+      // This is a placeholder for role-based redirect.
+      // In a real app, you would get the user's role from your database
+      // after they have been authenticated.
+      if (values.email.includes('admin')) {
+        router.push('/admin');
+      } else if (values.email.includes('doctor')) {
+        router.push('/doctor');
+      } else {
+        router.push('/dashboard');
+      }
+    } catch (error: any) {
+      console.error('Authentication error:', error.message);
+      toast({
+        variant: 'destructive',
+        title: 'Authentication Failed',
+        description: error.message,
+      });
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      // You can add custom logic here after a successful sign-in.
+      // For now, we'll just redirect to the dashboard.
       router.push('/dashboard');
+    } catch (error: any) {
+      console.error('Google Sign-In Error:', error.message);
+      toast({
+        variant: 'destructive',
+        title: 'Google Sign-In Failed',
+        description: error.message,
+      });
     }
   }
 
@@ -111,7 +145,7 @@ export default function LoginForm() {
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <Button variant="outline">
+          <Button variant="outline" onClick={handleGoogleSignIn}>
             <svg role="img" viewBox="0 0 24 24" className="mr-2 h-4 w-4">
               <path
                 fill="currentColor"
