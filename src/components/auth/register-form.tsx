@@ -8,7 +8,8 @@ import { useRouter } from 'next/navigation';
 import { 
   createUserWithEmailAndPassword, 
   GoogleAuthProvider, 
-  signInWithPopup 
+  signInWithPopup,
+  type AuthError
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
@@ -59,10 +60,14 @@ export default function RegisterForm() {
       router.push('/dashboard');
     } catch (error: any) {
       console.error('Registration error:', error.message);
+      let description = 'An unexpected error occurred. Please try again.';
+      if (error.code === 'auth/email-already-in-use') {
+        description = 'This email is already in use. Please try signing in instead.';
+      }
       toast({
         variant: 'destructive',
         title: 'Registration Failed',
-        description: error.message,
+        description,
       });
     }
   }
