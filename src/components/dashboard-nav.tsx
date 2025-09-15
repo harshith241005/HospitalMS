@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import {
   SidebarHeader,
   SidebarMenu,
@@ -21,10 +22,14 @@ import {
   LogOut,
   User,
   Settings,
+  Moon,
+  Sun,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { users } from '@/lib/placeholder-data';
 import { type UserRole } from '@/lib/types';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import { Button } from './ui/button';
 
 const adminNav = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -54,6 +59,35 @@ const navItems: Record<UserRole, { href: string; label: string; icon: React.Elem
   patient: patientNav,
 };
 
+function ThemeToggle() {
+  const { setTheme } = useTheme();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="w-full justify-start gap-2 px-2">
+            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="group-data-[collapsible=icon]:hidden">Toggle theme</span>
+            <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        <DropdownMenuItem onClick={() => setTheme('light')}>
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('dark')}>
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('system')}>
+          System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+
 export function DashboardNav() {
   const pathname = usePathname();
   const [userRole, setUserRole] = useState<UserRole>('patient');
@@ -80,7 +114,7 @@ export function DashboardNav() {
       <SidebarHeader>
         <div className="flex items-center gap-3 p-2">
             <Stethoscope className="w-8 h-8 text-primary" />
-            <span className="font-bold text-xl font-headline">MediTrack Pro</span>
+            <span className="font-bold text-xl font-headline group-data-[collapsible=icon]:hidden">MediTrack Pro</span>
         </div>
       </SidebarHeader>
       <SidebarContent className="p-2">
@@ -95,7 +129,7 @@ export function DashboardNav() {
                 >
                   <div>
                     <item.icon />
-                    <span>{item.label}</span>
+                    <span className="group-data-[collapsible=icon]:hidden">{item.label}</span>
                   </div>
                 </SidebarMenuButton>
               </Link>
@@ -106,11 +140,14 @@ export function DashboardNav() {
       <SidebarFooter className="p-2">
         <SidebarMenu>
             <SidebarMenuItem>
+                <ThemeToggle />
+            </SidebarMenuItem>
+            <SidebarMenuItem>
                 <Link href="#" passHref>
                     <SidebarMenuButton tooltip="Settings" asChild>
                         <div>
                             <Settings/>
-                            <span>Settings</span>
+                            <span className="group-data-[collapsible=icon]:hidden">Settings</span>
                         </div>
                     </SidebarMenuButton>
                 </Link>
@@ -120,13 +157,13 @@ export function DashboardNav() {
                     <SidebarMenuButton asChild tooltip="Logout">
                         <div>
                             <LogOut/>
-                            <span>Logout</span>
+                            <span className="group-data-[collapsible=icon]:hidden">Logout</span>
                         </div>
                     </SidebarMenuButton>
                 </Link>
             </SidebarMenuItem>
         </SidebarMenu>
-        <div className="p-2 mt-2 border-t">
+        <div className="p-2 mt-2 border-t group-data-[collapsible=icon]:hidden">
           <div className="flex items-center gap-3">
             <Avatar>
               <AvatarImage src={currentUser?.avatarUrl} alt={currentUser?.name} data-ai-hint={currentUser?.dataAiHint} />
