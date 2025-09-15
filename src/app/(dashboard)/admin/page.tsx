@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { appointments, doctors, patients } from "@/lib/placeholder-data";
-import { BarChart, Calendar, Stethoscope, User } from "lucide-react";
+import { Calendar, Stethoscope, User } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Bar, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 
 const chartData = [
   { month: "Jan", appointments: 186 },

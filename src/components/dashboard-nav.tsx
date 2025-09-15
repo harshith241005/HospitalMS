@@ -18,7 +18,6 @@ import {
   Upload,
   Stethoscope,
   Users,
-  Building,
   LogOut,
   User,
   Settings,
@@ -39,7 +38,6 @@ const doctorNav = [
   { href: '/doctor', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/doctor/schedule', label: 'Schedule', icon: Calendar },
   { href: '/doctor/appointments', label: 'Appointments', icon: Users },
-  { href: '/doctor/prescriptions', label: 'Prescriptions', icon: FileText },
 ];
 
 const patientNav = [
@@ -61,13 +59,15 @@ export function DashboardNav() {
   const [userRole, setUserRole] = useState<UserRole>('patient');
   
   // In a real app, this would come from an auth context
-  const currentUser = users.find(u => u.role === userRole) || users[5];
+  const currentUser = users.find(u => u.role === userRole) || users.find(u => u.role === 'patient');
 
   useEffect(() => {
     if (pathname.startsWith('/admin')) {
       setUserRole('admin');
-    } else if (pathname.startsWith('/doctor') || pathname.startsWith('/staff')) {
+    } else if (pathname.startsWith('/doctor')) {
       setUserRole('doctor');
+    } else if (pathname.startsWith('/staff')) {
+        setUserRole('staff');
     } else {
       setUserRole('patient');
     }
@@ -104,8 +104,8 @@ export function DashboardNav() {
       <SidebarFooter className="p-2">
         <SidebarMenu>
             <SidebarMenuItem>
-                <Link href="/settings" passHref>
-                    <SidebarMenuButton isActive={pathname === '/settings'} asChild tooltip="Settings">
+                <Link href="#" passHref>
+                    <SidebarMenuButton tooltip="Settings">
                         <Settings/>
                         <span>Settings</span>
                     </SidebarMenuButton>
@@ -123,12 +123,12 @@ export function DashboardNav() {
         <div className="p-2 mt-2 border-t">
           <div className="flex items-center gap-3">
             <Avatar>
-              <AvatarImage src={currentUser.avatarUrl} alt={currentUser.name} data-ai-hint={currentUser.dataAiHint} />
-              <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
+              <AvatarImage src={currentUser?.avatarUrl} alt={currentUser?.name} data-ai-hint={currentUser?.dataAiHint} />
+              <AvatarFallback>{currentUser?.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col text-sm">
-                <span className="font-semibold">{currentUser.name}</span>
-                <span className="text-muted-foreground">{currentUser.email}</span>
+                <span className="font-semibold">{currentUser?.name}</span>
+                <span className="text-muted-foreground">{currentUser?.email}</span>
             </div>
           </div>
         </div>

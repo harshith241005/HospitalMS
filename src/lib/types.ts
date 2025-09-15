@@ -7,6 +7,7 @@ export interface User {
   role: UserRole;
   avatarUrl: string;
   dataAiHint?: string;
+  specialization?: string; // Optional for doctors
 }
 
 export interface Patient extends User {
