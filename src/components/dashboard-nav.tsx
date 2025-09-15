@@ -93,10 +93,10 @@ export function DashboardNav() {
                   asChild
                   tooltip={item.label}
                 >
-                  <React.Fragment>
+                  <div>
                     <item.icon />
                     <span>{item.label}</span>
-                  </React.Fragment>
+                  </div>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
@@ -107,21 +107,21 @@ export function DashboardNav() {
         <SidebarMenu>
             <SidebarMenuItem>
                 <Link href="#" passHref>
-                    <SidebarMenuButton tooltip="Settings">
-                        <React.Fragment>
+                    <SidebarMenuButton tooltip="Settings" asChild>
+                        <div>
                             <Settings/>
                             <span>Settings</span>
-                        </React.Fragment>
+                        </div>
                     </SidebarMenuButton>
                 </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
                 <Link href="/" passHref>
                     <SidebarMenuButton asChild tooltip="Logout">
-                        <React.Fragment>
+                        <div>
                             <LogOut/>
                             <span>Logout</span>
-                        </React.Fragment>
+                        </div>
                     </SidebarMenuButton>
                 </Link>
             </SidebarMenuItem>
