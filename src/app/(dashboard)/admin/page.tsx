@@ -1,8 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { appointments, doctors, patients } from "@/lib/placeholder-data";
-import { Calendar, Stethoscope, User } from "lucide-react";
+import { Calendar, MoreHorizontal, Stethoscope, User } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const chartData = [
   { month: "Jan", appointments: 186 },
@@ -24,8 +27,27 @@ export default function AdminDashboardPage() {
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-            <h2 className="text-3xl font-bold tracking-tight font-headline">Admin Dashboard</h2>
-            <p className="text-muted-foreground">An overview of the hospital's activities and resources.</p>
+            <div className="flex items-center justify-between space-y-2">
+                <div>
+                    <h2 className="text-3xl font-bold tracking-tight font-headline">Admin Dashboard</h2>
+                    <p className="text-muted-foreground">An overview of the hospital's activities and resources.</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                     <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem asChild><Link href="/dashboard">Patient View</Link></DropdownMenuItem>
+                            <DropdownMenuItem asChild><Link href="/doctor">Doctor View</Link></DropdownMenuItem>
+                            <DropdownMenuItem asChild><Link href="/admin">Admin View</Link></DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

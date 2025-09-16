@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { appointments, prescriptions, reports, users } from "@/lib/placeholder-data";
-import { Calendar, FileText, PlusCircle, UploadCloud } from "lucide-react";
+import { Calendar, FileText, MoreHorizontal, PlusCircle, UploadCloud } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export default function PatientDashboardPage() {
     const currentUser = users.find(u => u.role === 'patient');
@@ -23,6 +24,19 @@ export default function PatientDashboardPage() {
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Book Appointment
                     </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem asChild><Link href="/dashboard">Patient View</Link></DropdownMenuItem>
+                            <DropdownMenuItem asChild><Link href="/doctor">Doctor View</Link></DropdownMenuItem>
+                            <DropdownMenuItem asChild><Link href="/admin">Admin View</Link></DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
 
