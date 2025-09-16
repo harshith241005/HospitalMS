@@ -24,6 +24,7 @@ import {
   Settings,
   Moon,
   Sun,
+  Video,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { users } from '@/lib/placeholder-data';
@@ -50,6 +51,7 @@ const patientNav = [
   { href: '/dashboard/appointments', label: 'Appointments', icon: Calendar },
   { href: '/dashboard/prescriptions', label: 'Prescriptions', icon: FileText },
   { href: '/dashboard/reports', label: 'Reports', icon: Upload },
+  { href: '/dashboard/video-consultation', label: 'Video Consultation', icon: Video },
 ];
 
 const navItems: Record<UserRole, { href: string; label: string; icon: React.ElementType }[]> = {
