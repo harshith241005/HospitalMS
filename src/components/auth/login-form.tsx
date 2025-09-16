@@ -61,11 +61,15 @@ export default function LoginForm() {
         router.push('/dashboard');
       }
     } catch (error: any) {
-      console.error('Authentication error:', error.message);
+      let description = "Invalid credentials. Please check your email and password.";
+      if (error.code !== 'auth/invalid-credential') {
+        console.error('Authentication error:', error.message);
+        description = error.message;
+      }
       toast({
         variant: 'destructive',
         title: 'Authentication Failed',
-        description: error.message,
+        description: description,
       });
     }
   }
