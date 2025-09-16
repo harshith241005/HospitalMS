@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'doctor' | 'staff' | 'patient';
+export type UserRole = 'admin' | 'doctor' | 'patient';
 
 export interface User {
   id: string;
@@ -21,10 +21,6 @@ export interface Doctor extends User {
   role: 'doctor';
   specialization: string;
   schedule?: any[];
-}
-
-export interface Staff extends User {
-  role: 'staff';
 }
 
 export interface Admin extends User {

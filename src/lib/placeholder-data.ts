@@ -1,18 +1,15 @@
-import type { User, Patient, Doctor, Staff, Admin, Appointment, Prescription, Report, Notification } from './types';
+import type { User, Patient, Doctor, Admin, Appointment, Prescription, Report, Notification } from './types';
 
 export const users: User[] = [
   { id: 'admin-1', name: 'Dr. Evelyn Reed', email: 'evelyn.reed@meditrack.pro', role: 'admin', avatarUrl: 'https://picsum.photos/seed/avatar7/200/200', dataAiHint: 'professional person' },
   { id: 'doc-1', name: 'Dr. Alan Grant', email: 'alan.grant@meditrack.pro', role: 'doctor', specialization: 'Cardiology', avatarUrl: 'https://picsum.photos/seed/avatar2/200/200', dataAiHint: 'doctor man' },
   { id: 'doc-2', name: 'Dr. Ellie Sattler', email: 'ellie.sattler@meditrack.pro', role: 'doctor', specialization: 'Pediatrics', avatarUrl: 'https://picsum.photos/seed/avatar1/200/200', dataAiHint: 'doctor woman' },
-  { id: 'staff-1', name: 'John Hammond', email: 'john.hammond@meditrack.pro', role: 'staff', avatarUrl: 'https://picsum.photos/seed/avatar6/200/200', dataAiHint: 'nurse man' },
-  { id: 'staff-2', name: 'Sarah Harding', email: 'sarah.harding@meditrack.pro', role: 'staff', avatarUrl: 'https://picsum.photos/seed/avatar5/200/200', dataAiHint: 'nurse woman' },
   { id: 'pat-1', name: 'Ian Malcolm', email: 'ian.malcolm@meditrack.pro', role: 'patient', avatarUrl: 'https://picsum.photos/seed/avatar4/200/200', dataAiHint: 'patient man' },
   { id: 'pat-2', name: 'Lex Murphy', email: 'lex.murphy@meditrack.pro', role: 'patient', avatarUrl: 'https://picsum.photos/seed/avatar3/200/200', dataAiHint: 'patient woman' },
 ];
 
 export const doctors: Doctor[] = users.filter(u => u.role === 'doctor') as Doctor[];
 export const patients: Patient[] = users.filter(u => u.role === 'patient') as Patient[];
-export const staff: Staff[] = users.filter(u => u.role === 'staff') as Staff[];
 export const admins: Admin[] = users.filter(u => u.role === 'admin') as Admin[];
 
 export const appointments: Appointment[] = [

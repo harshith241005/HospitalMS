@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { doctors, staff } from "@/lib/placeholder-data";
+import { doctors } from "@/lib/placeholder-data";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from '@/components/ui/button';
@@ -17,7 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 
 type AttendanceStatus = 'present' | 'absent' | 'leave';
 
-const allUsers: User[] = [...doctors, ...staff];
+const allUsers: User[] = [...doctors];
 
 export default function AttendancePage() {
     const [date, setDate] = useState<Date | undefined>(new Date());
@@ -46,7 +46,7 @@ export default function AttendancePage() {
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight font-headline">Manage Attendance</h2>
                     <p className="text-muted-foreground">
-                        Select a date and mark attendance for all doctors and staff.
+                        Select a date and mark attendance for all doctors.
                     </p>
                 </div>
                 <Button onClick={handleSaveAttendance} disabled={Object.keys(attendance).length === 0}>
@@ -130,4 +130,3 @@ export default function AttendancePage() {
         </div>
     );
 }
-

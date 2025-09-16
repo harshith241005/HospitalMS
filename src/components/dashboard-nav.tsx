@@ -37,7 +37,6 @@ import { Button } from './ui/button';
 const adminNav = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/doctors', label: 'Doctors', icon: Stethoscope },
-  { href: '/admin/staff', label: 'Staff', icon: Users },
   { href: '/admin/patients', label: 'Patients', icon: User },
   { href: '/admin/appointments', label: 'Appointments', icon: Calendar },
   { href: '/admin/attendance', label: 'Attendance', icon: ClipboardCheck },
@@ -63,7 +62,6 @@ const patientNav = [
 const navItems: Record<UserRole, { href: string; label: string; icon: React.ElementType }[]> = {
   admin: adminNav,
   doctor: doctorNav,
-  staff: doctorNav, // Assuming staff has similar nav to doctors
   patient: patientNav,
 };
 
@@ -108,8 +106,6 @@ export function DashboardNav() {
       setUserRole('admin');
     } else if (pathname.startsWith('/doctor')) {
       setUserRole('doctor');
-    } else if (pathname.startsWith('/staff')) {
-        setUserRole('staff');
     } else {
       setUserRole('patient');
     }
