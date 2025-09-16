@@ -59,10 +59,11 @@ export default function RegisterForm() {
       // in your database. For this example, we'll just redirect.
       router.push('/dashboard');
     } catch (error: any) {
-      console.error('Registration error:', error.message);
       let description = 'An unexpected error occurred. Please try again.';
       if (error.code === 'auth/email-already-in-use') {
         description = 'This email is already in use. Please try signing in instead.';
+      } else {
+        console.error('Registration error:', error.message);
       }
       toast({
         variant: 'destructive',
