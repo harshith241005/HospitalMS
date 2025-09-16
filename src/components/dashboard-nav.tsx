@@ -26,6 +26,7 @@ import {
   Moon,
   Sun,
   Video,
+  Bell,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { users } from '@/lib/placeholder-data';
@@ -39,12 +40,14 @@ const adminNav = [
   { href: '/admin/staff', label: 'Staff', icon: Users },
   { href: '/admin/patients', label: 'Patients', icon: User },
   { href: '/admin/appointments', label: 'Appointments', icon: Calendar },
+  { href: '/admin/notifications', label: 'Notifications', icon: Bell },
 ];
 
 const doctorNav = [
   { href: '/doctor', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/doctor/schedule', label: 'Schedule', icon: Calendar },
   { href: '/doctor/appointments', label: 'Appointments', icon: Users },
+  { href: '/doctor/notifications', label: 'Notifications', icon: Bell },
 ];
 
 const patientNav = [
@@ -53,6 +56,7 @@ const patientNav = [
   { href: '/dashboard/prescriptions', label: 'Prescriptions', icon: FileText },
   { href: '/dashboard/reports', label: 'Reports', icon: Upload },
   { href: '/dashboard/video-consultation', label: 'Video Consultation', icon: Video },
+  { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
 ];
 
 const navItems: Record<UserRole, { href: string; label: string; icon: React.ElementType }[]> = {

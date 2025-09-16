@@ -66,3 +66,12 @@ export interface Report {
   uploadDate: Date;
   url: string;
 }
+
+export interface Notification {
+    id: string;
+    userId: string;
+    title: string;
+    message: string;
+    date: Date;
+    read: boolean;
+}

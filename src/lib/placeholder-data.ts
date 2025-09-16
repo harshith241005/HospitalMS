@@ -1,4 +1,4 @@
-import type { User, Patient, Doctor, Staff, Admin, Appointment, Prescription, Report } from './types';
+import type { User, Patient, Doctor, Staff, Admin, Appointment, Prescription, Report, Notification } from './types';
 
 export const users: User[] = [
   { id: 'admin-1', name: 'Dr. Evelyn Reed', email: 'evelyn.reed@meditrack.pro', role: 'admin', avatarUrl: 'https://picsum.photos/seed/avatar7/200/200', dataAiHint: 'professional person' },
@@ -56,4 +56,12 @@ export const reports: Report[] = [
     { id: 'rep-1', patientId: 'pat-1', name: 'Blood Test Results - Jan 2024.pdf', uploadDate: new Date('2024-01-20'), url: '#' },
     { id: 'rep-2', patientId: 'pat-1', name: 'X-Ray - Chest - Feb 2024.pdf', uploadDate: new Date('2024-02-15'), url: '#' },
     { id: 'rep-3', patientId: 'pat-2', name: 'Annual Physical Summary - Dec 2023.pdf', uploadDate: new Date('2023-12-10'), url: '#' },
+];
+
+export const notifications: Notification[] = [
+    { id: 'notif-1', userId: 'pat-1', title: 'Appointment Reminder', message: 'Your appointment with Dr. Alan Grant is tomorrow at 10:00 AM.', date: new Date(new Date().setDate(new Date().getDate() - 1)), read: false },
+    { id: 'notif-2', userId: 'pat-1', title: 'New Prescription', message: 'Dr. Ellie Sattler has added a new prescription for you.', date: new Date(new Date().setDate(new Date().getDate() - 10)), read: true },
+    { id: 'notif-3', userId: 'doc-1', title: 'New Appointment Request', message: 'Ian Malcolm has requested an appointment for "Chest pain".', date: new Date(new Date().setDate(new Date().getDate())), read: false },
+    { id: 'notif-4', userId: 'admin-1', title: 'System Update', message: 'A new system update was successfully installed.', date: new Date(new Date().setDate(new Date().getDate() - 2)), read: true },
+    { id: 'notif-5', userId: 'doc-2', title: 'Appointment Canceled', message: 'Your appointment with Lex Murphy has been canceled.', date: new Date(new Date().setDate(new Date().getDate() - 3)), read: true },
 ];
