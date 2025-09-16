@@ -1,6 +1,5 @@
 import LoginForm from '@/components/auth/login-form';
 import { Stethoscope } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function LoginPage() {
   return (
@@ -17,18 +16,7 @@ export default function LoginPage() {
             Welcome! Please sign in to your account.
           </p>
         </div>
-        <Tabs defaultValue="patient" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="patient">Patient</TabsTrigger>
-            <TabsTrigger value="admin">Admin & Doctor</TabsTrigger>
-          </TabsList>
-          <TabsContent value="patient">
-            <LoginForm />
-          </TabsContent>
-          <TabsContent value="admin">
-            <LoginForm />
-          </TabsContent>
-        </Tabs>
+        <LoginForm />
       </div>
     </main>
   );
