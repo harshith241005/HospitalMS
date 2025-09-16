@@ -1,9 +1,10 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { appointments } from "@/lib/placeholder-data";
+import { appointments, users } from "@/lib/placeholder-data";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
@@ -17,6 +18,13 @@ const statusColors: Record<AppointmentStatus, string> = {
 };
 
 export default function AppointmentsPage() {
+    // In a real app, you would get the logged-in user's ID.
+    // For this prototype, we'll assume the user is the first patient.
+    const currentPatient = users.find(u => u.role === 'patient');
+    const patientAppointments = appointments.filter(
+        appointment => appointment.patient.id === currentPatient?.id
+    );
+
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
             <div className="flex items-center justify-between space-y-2">
@@ -43,7 +51,7 @@ export default function AppointmentsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {appointments.map((appointment: Appointment) => (
+                            {patientAppointments.map((appointment: Appointment) => (
                                 <TableRow key={appointment.id}>
                                     <TableCell className="font-medium">{appointment.doctor.name}</TableCell>
                                     <TableCell>{appointment.doctor.specialization}</TableCell>
