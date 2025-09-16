@@ -1,28 +1,29 @@
 
 import ManagementTable from "@/components/dashboard/admin/management-table";
-import { Doctor } from "@/lib/types";
+import type { Doctor } from "@/lib/types";
 
 async function getDoctors(): Promise<Doctor[]> {
-  // In a real application, you would fetch data from your backend here.
-  // Replace this with your actual API endpoint.
-  // For now, we will simulate a fetch with a delay.
-  const { doctors } = await import("@/lib/placeholder-data");
-  return new Promise(resolve => setTimeout(() => resolve(doctors), 1000));
-
-  /*
-  // Example of a real fetch call:
+  // This function now fetches data from your local backend.
+  // Make sure your backend server is running and provides data at this endpoint.
   try {
-    const response = await fetch('http://your-backend-url.com/api/doctors');
+    // Replace 'http://localhost:3001/api/doctors' with your actual backend endpoint.
+    const response = await fetch('http://localhost:3001/api/doctors', { 
+      cache: 'no-store' // Ensures fresh data is fetched on every request
+    });
+
     if (!response.ok) {
-      throw new Error('Failed to fetch doctors');
+      throw new Error(`Failed to fetch doctors. Status: ${response.status}`);
     }
+    
     const data = await response.json();
     return data;
+
   } catch (error) {
     console.error("Error fetching doctors:", error);
-    return []; // Return an empty array on error
+    // Return an empty array on error to prevent the page from crashing.
+    // You might want to implement more robust error handling here.
+    return []; 
   }
-  */
 }
 
 
