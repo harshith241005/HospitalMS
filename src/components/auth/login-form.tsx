@@ -8,7 +8,8 @@ import {
   getAuth, 
   signInWithEmailAndPassword, 
   GoogleAuthProvider, 
-  signInWithPopup 
+  signInWithPopup,
+  User
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
@@ -50,30 +51,42 @@ export default function LoginForm() {
     },
   });
 
+  const handleRoleBasedRedirect = async (user: User) => {
+    try {
+      const idTokenResult = await user.getIdTokenResult(true); // Force refresh
+      const role = idTokenResult.claims.role;
+
+      switch (role) {
+        case 'admin':
+          router.push('/admin');
+          break;
+        case 'doctor':
+          router.push('/doctor');
+          break;
+        case 'patient':
+        default:
+          router.push('/dashboard');
+          break;
+      }
+    } catch (error) {
+        console.error("Error getting user role, defaulting to patient dashboard:", error);
+        router.push('/dashboard');
+    }
+  }
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
-      
-      // In a real application, you would fetch the user's role from your database here.
-      // For this prototype, we will simulate role-based redirection based on the email address.
-      const email = values.email.toLowerCase();
-      if (email.includes('admin')) {
-        router.push('/admin');
-      } else if (email.includes('doctor')) {
-        router.push('/doctor');
-      } else {
-        router.push('/dashboard'); // Default to patient dashboard
-      }
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      await handleRoleBasedRedirect(userCredential.user);
+
     } catch (error: any) {
       let description = "Invalid credentials. Please check your email and password.";
-      // This specific error code is for invalid credentials.
       if (error.code === 'auth/invalid-credential') {
         // No console log needed here as it's an expected user error.
       } else {
-        // Log other unexpected errors for debugging.
         console.error('Authentication error:', error.message);
-        description = error.message;
+        description = "An unexpected error occurred. Please try again.";
       }
       toast({
         variant: 'destructive',
@@ -89,16 +102,14 @@ export default function LoginForm() {
     const provider = new GoogleAuthProvider();
     setIsLoading(true);
     try {
-      await signInWithPopup(auth, provider);
-      // In a real app, you'd check the user's role in your database after
-      // Google sign-in and redirect accordingly. For now, we default to patient.
-      router.push('/dashboard');
+      const result = await signInWithPopup(auth, provider);
+      await handleRoleBasedRedirect(result.user);
     } catch (error: any) {
       console.error('Google Sign-In Error:', error.message);
       toast({
         variant: 'destructive',
         title: 'Google Sign-In Failed',
-        description: error.message,
+        description: "Could not sign in with Google. Please try again.",
       });
     } finally {
       setIsLoading(false);
