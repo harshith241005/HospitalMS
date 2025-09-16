@@ -12,6 +12,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -39,6 +41,7 @@ const formSchema = z.object({
 export default function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,6 +51,7 @@ export default function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       
@@ -76,11 +80,14 @@ export default function LoginForm() {
         title: 'Authentication Failed',
         description: description,
       });
+    } finally {
+      setIsLoading(false);
     }
   }
 
   async function handleGoogleSignIn() {
     const provider = new GoogleAuthProvider();
+    setIsLoading(true);
     try {
       await signInWithPopup(auth, provider);
       // In a real app, you'd check the user's role in your database after
@@ -93,6 +100,8 @@ export default function LoginForm() {
         title: 'Google Sign-In Failed',
         description: error.message,
       });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -101,7 +110,7 @@ export default function LoginForm() {
       <CardContent className="p-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-4">
+            <fieldset disabled={isLoading} className="space-y-4">
               <FormField
                 control={form.control}
                 name="email"
@@ -136,8 +145,9 @@ export default function LoginForm() {
                   </FormItem>
                 )}
               />
-            </div>
-            <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
+            </fieldset>
+            <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
             </Button>
           </form>
@@ -154,7 +164,8 @@ export default function LoginForm() {
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          <Button variant="outline" onClick={handleGoogleSignIn}>
+          <Button variant="outline" onClick={handleGoogleSignIn} disabled={isLoading}>
+             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             <svg role="img" viewBox="0 0 24 24" className="mr-2 h-4 w-4">
               <path
                 fill="currentColor"
