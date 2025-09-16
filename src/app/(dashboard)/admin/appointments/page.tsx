@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { appointments } from "@/lib/placeholder-data";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -13,7 +12,33 @@ const statusColors: Record<AppointmentStatus, string> = {
     'Pending Approval': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
 };
 
-export default function AllAppointmentsPage() {
+async function getAppointments(): Promise<Appointment[]> {
+    try {
+        const response = await fetch('http://localhost:3001/api/appointments', { 
+          cache: 'no-store' 
+        });
+    
+        if (!response.ok) {
+          throw new Error(`Failed to fetch appointments. Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        // The backend might return date strings, so we need to convert them to Date objects
+        return data.map((appt: any) => ({
+            ...appt,
+            date: new Date(appt.date)
+        }));
+    
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+        return []; 
+      }
+}
+
+
+export default async function AllAppointmentsPage() {
+    const appointments = await getAppointments();
+
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
             <h2 className="text-3xl font-bold tracking-tight font-headline">All Appointments</h2>
