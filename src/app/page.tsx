@@ -1,5 +1,6 @@
 import LoginForm from '@/components/auth/login-form';
 import { Stethoscope } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function LoginPage() {
   return (
@@ -13,10 +14,21 @@ export default function LoginPage() {
             MediTrack Pro
           </h1>
           <p className="mt-2 text-center text-sm text-muted-foreground">
-            Welcome back! Please sign in to your account.
+            Welcome! Please sign in to your account.
           </p>
         </div>
-        <LoginForm />
+        <Tabs defaultValue="patient" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="patient">Patient</TabsTrigger>
+            <TabsTrigger value="admin">Admin & Doctor</TabsTrigger>
+          </TabsList>
+          <TabsContent value="patient">
+            <LoginForm />
+          </TabsContent>
+          <TabsContent value="admin">
+            <LoginForm />
+          </TabsContent>
+        </Tabs>
       </div>
     </main>
   );
