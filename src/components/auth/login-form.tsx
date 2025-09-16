@@ -50,19 +50,24 @@ export default function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
-      // This is a placeholder for role-based redirect.
-      // In a real app, you would get the user's role from your database
-      // after they have been authenticated.
-      if (values.email.includes('admin')) {
+      
+      // In a real application, you would fetch the user's role from your database here.
+      // For this prototype, we will simulate role-based redirection based on the email address.
+      const email = values.email.toLowerCase();
+      if (email.includes('admin')) {
         router.push('/admin');
-      } else if (values.email.includes('doctor')) {
+      } else if (email.includes('doctor')) {
         router.push('/doctor');
       } else {
-        router.push('/dashboard');
+        router.push('/dashboard'); // Default to patient dashboard
       }
     } catch (error: any) {
       let description = "Invalid credentials. Please check your email and password.";
-      if (error.code !== 'auth/invalid-credential') {
+      // This specific error code is for invalid credentials.
+      if (error.code === 'auth/invalid-credential') {
+        // No console log needed here as it's an expected user error.
+      } else {
+        // Log other unexpected errors for debugging.
         console.error('Authentication error:', error.message);
         description = error.message;
       }
@@ -78,8 +83,8 @@ export default function LoginForm() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      // You can add custom logic here after a successful sign-in.
-      // For now, we'll just redirect to the dashboard.
+      // In a real app, you'd check the user's role in your database after
+      // Google sign-in and redirect accordingly. For now, we default to patient.
       router.push('/dashboard');
     } catch (error: any) {
       console.error('Google Sign-In Error:', error.message);
