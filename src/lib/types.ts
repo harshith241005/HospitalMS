@@ -35,7 +35,7 @@ export type AppointmentStatus = 'Scheduled' | 'Completed' | 'Canceled' | 'Pendin
 
 export interface Appointment {
   id: string;
-  patient: Patient;
+  patient: Patient | User;
   doctor: Doctor;
   date: Date;
   status: AppointmentStatus;
