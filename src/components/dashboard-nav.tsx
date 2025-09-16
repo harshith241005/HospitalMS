@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -27,6 +26,7 @@ import {
   Sun,
   Video,
   Bell,
+  ClipboardCheck,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { users } from '@/lib/placeholder-data';
@@ -40,6 +40,7 @@ const adminNav = [
   { href: '/admin/staff', label: 'Staff', icon: Users },
   { href: '/admin/patients', label: 'Patients', icon: User },
   { href: '/admin/appointments', label: 'Appointments', icon: Calendar },
+  { href: '/admin/attendance', label: 'Attendance', icon: ClipboardCheck },
   { href: '/admin/notifications', label: 'Notifications', icon: Bell },
 ];
 
