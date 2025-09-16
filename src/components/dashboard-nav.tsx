@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -110,6 +111,8 @@ export function DashboardNav() {
   }, [pathname]);
 
   const currentNav = navItems[userRole];
+  const settingsPath = `/${userRole === 'patient' ? 'dashboard' : userRole}/settings`;
+
 
   return (
     <>
@@ -145,8 +148,8 @@ export function DashboardNav() {
                 <ThemeToggle />
             </SidebarMenuItem>
             <SidebarMenuItem>
-                <Link href="#" passHref>
-                    <SidebarMenuButton tooltip="Settings" asChild>
+                <Link href={settingsPath} passHref>
+                    <SidebarMenuButton tooltip="Settings" asChild isActive={pathname === settingsPath}>
                         <div>
                             <Settings/>
                             <span className="group-data-[collapsible=icon]:hidden">Settings</span>
