@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { appointments } from "@/lib/placeholder-data";
@@ -9,7 +10,7 @@ export default function SchedulePage() {
         .map(a => a.date);
 
     const upcomingAppointments = appointments
-        .filter(a => a.status === 'Scheduled')
+        .filter(a => a.status === 'Scheduled' && a.date >= new Date())
         .sort((a, b) => a.date.getTime() - b.date.getTime())
         .slice(0, 5);
     
@@ -26,6 +27,7 @@ export default function SchedulePage() {
                             mode="multiple"
                             selected={scheduledDates}
                             className="rounded-md border"
+                            defaultMonth={new Date()}
                         />
                     </CardContent>
                 </Card>

@@ -1,12 +1,14 @@
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { appointments, patients } from "@/lib/placeholder-data";
+import { appointments, patients, users } from "@/lib/placeholder-data";
 import { Calendar, User, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function DoctorDashboardPage() {
+    const currentUser = users.find(u => u.role === 'doctor');
     const todayAppointments = appointments.filter(a => new Date(a.date).toDateString() === new Date().toDateString() && (a.status === 'Scheduled'));
     const pendingAppointments = appointments.filter(a => a.status === 'Pending Approval').slice(0, 3);
     const myPatients = patients.slice(0, 5); // Placeholder for doctor's assigned patients
@@ -15,7 +17,7 @@ export default function DoctorDashboardPage() {
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
             <div className="flex items-center justify-between space-y-2">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight font-headline">Welcome, Dr. Grant!</h2>
+                    <h2 className="text-3xl font-bold tracking-tight font-headline">Welcome, {currentUser?.name}!</h2>
                     <p className="text-muted-foreground">Here's what's on your schedule for today.</p>
                 </div>
             </div>
