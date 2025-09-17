@@ -37,6 +37,7 @@ const adminNav = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/doctors', label: 'Doctors', icon: Stethoscope },
   { href: '/admin/patients', label: 'Patients', icon: User },
+  { href: '/admin/staff', label: 'Staff', icon: Users },
   { href: '/admin/appointments', label: 'Appointments', icon: Calendar },
   { href: '/admin/attendance', label: 'Attendance', icon: ClipboardCheck },
   { href: '/admin/notifications', label: 'Notifications', icon: Bell },

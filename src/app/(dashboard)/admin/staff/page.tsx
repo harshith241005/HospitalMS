@@ -1,5 +1,12 @@
 import ManagementTable from "@/components/dashboard/admin/management-table";
-import { staff } from "@/lib/placeholder-data";
+import type { User } from "@/lib/types";
+
+// This would typically come from an API call
+const staff: User[] = [
+    { id: 'staff-1', name: 'Grace Hopper', email: 'grace.h@meditrack.pro', role: 'patient', avatarUrl: 'https://picsum.photos/seed/avatar5/200/200', dataAiHint: 'nurse woman' },
+    { id: 'staff-2', name: 'Charles Babbage', email: 'charles.b@meditrack.pro', role: 'patient', avatarUrl: 'https://picsum.photos/seed/avatar6/200/200', dataAiHint: 'nurse man' },
+];
+
 
 export default function ManageStaffPage() {
     return (
