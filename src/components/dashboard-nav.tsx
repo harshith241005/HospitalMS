@@ -24,7 +24,6 @@ import {
   Settings,
   Moon,
   Sun,
-  Video,
   Bell,
   ClipboardCheck,
 } from 'lucide-react';
@@ -55,7 +54,6 @@ const patientNav = [
   { href: '/dashboard/appointments', label: 'Appointments', icon: Calendar },
   { href: '/dashboard/prescriptions', label: 'Prescriptions', icon: FileText },
   { href: '/dashboard/reports', label: 'Reports', icon: Upload },
-  { href: '/dashboard/video-consultation', label: 'Video Consultation', icon: Video },
   { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
 ];
 
