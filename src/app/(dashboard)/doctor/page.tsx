@@ -1,17 +1,50 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { appointments, patients, users } from "@/lib/placeholder-data";
+import { users } from "@/lib/placeholder-data";
 import { Calendar, MoreHorizontal, User, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import type { Appointment, Patient } from "@/lib/types";
 
-export default function DoctorDashboardPage() {
+async function getDoctorData(doctorId: string) {
+    try {
+        const appointmentsPromise = fetch(`http://localhost:3001/api/appointments/doctor/${doctorId}`, { cache: 'no-store' });
+        const patientsPromise = fetch(`http://localhost:3001/api/patients/doctor/${doctorId}`, { cache: 'no-store' });
+
+        const [appointmentsResponse, patientsResponse] = await Promise.all([appointmentsPromise, patientsPromise]);
+
+        if (!appointmentsResponse.ok) {
+            console.error(`Failed to fetch doctor appointments. Status: ${appointmentsResponse.status}`);
+        }
+        const appointments = appointmentsResponse.ok ? await appointmentsResponse.json() : [];
+        const mappedAppointments = appointments.map((appt: any) => ({
+            ...appt,
+            date: new Date(appt.date)
+        }));
+
+
+        if (!patientsResponse.ok) {
+            console.error(`Failed to fetch doctor patients. Status: ${patientsResponse.status}`);
+        }
+        const patients = patientsResponse.ok ? await patientsResponse.json() : [];
+
+        return { appointments: mappedAppointments, patients };
+
+    } catch (error) {
+        console.error("Error fetching doctor data:", error);
+        return { appointments: [], patients: [] };
+    }
+}
+
+
+export default async function DoctorDashboardPage() {
     const currentUser = users.find(u => u.role === 'doctor');
-    const todayAppointments = appointments.filter(a => new Date(a.date).toDateString() === new Date().toDateString() && (a.status === 'Scheduled'));
-    const pendingAppointments = appointments.filter(a => a.status === 'Pending Approval').slice(0, 3);
-    const myPatients = patients.slice(0, 5); // Placeholder for doctor's assigned patients
+    const { appointments, patients: myPatients } = await getDoctorData(currentUser?.id || 'doc-1');
+    
+    const todayAppointments = appointments.filter((a: Appointment) => new Date(a.date).toDateString() === new Date().toDateString() && (a.status === 'Scheduled'));
+    const pendingAppointments = appointments.filter((a: Appointment) => a.status === 'Pending Approval').slice(0, 3);
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -78,7 +111,7 @@ export default function DoctorDashboardPage() {
                         <p className="text-xs text-muted-foreground">Recently active patients.</p>
                         <Button variant="link" asChild className="p-0 h-auto mt-4">
                             {/* This would link to a "My Patients" page */}
-                            <Link href="#">View All Patients</Link>
+                            <Link href="/doctor/patients">View All Patients</Link>
                         </Button>
                     </CardContent>
                 </Card>
@@ -92,7 +125,7 @@ export default function DoctorDashboardPage() {
                     <CardContent>
                         {todayAppointments.length > 0 ? (
                             <ul className="space-y-4">
-                                {todayAppointments.map(appt => (
+                                {todayAppointments.map((appt: Appointment) => (
                                     <li key={appt.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-secondary">
                                         <div>
                                             <p className="font-semibold">{appt.patient.name}</p>
@@ -117,12 +150,12 @@ export default function DoctorDashboardPage() {
                     <CardContent>
                         {pendingAppointments.length > 0 ? (
                             <ul className="space-y-2">
-                                {pendingAppointments.map(appt => (
+                                {pendingAppointments.map((appt: Appointment) => (
                                     <li key={appt.id} className="flex items-center justify-between text-sm p-2 rounded-lg hover:bg-secondary">
                                         <div className="flex items-center gap-3">
                                             <Avatar className="h-8 w-8">
                                                 <AvatarImage src={appt.patient.avatarUrl} alt={appt.patient.name} />
-                                                <AvatarFallback>{appt.patient.name.charAt(0)}</AvatarFallback>
+                                                <AvatarFallback>{(appt.patient.name as string).charAt(0)}</AvatarFallback>
                                             </Avatar>
                                             <div>
                                                 <p className="font-semibold">{appt.patient.name}</p>
@@ -141,4 +174,5 @@ export default function DoctorDashboardPage() {
             </div>
         </div>
     );
-}
+
+    
