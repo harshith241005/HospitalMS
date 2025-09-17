@@ -77,7 +77,7 @@ export default async function AppointmentsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {patientAppointments.map((appointment: Appointment) => (
+                            {patientAppointments.length > 0 ? patientAppointments.map((appointment: Appointment) => (
                                 <TableRow key={appointment.id}>
                                     <TableCell className="font-medium">{appointment.doctor.name}</TableCell>
                                     <TableCell>{appointment.doctor.specialization}</TableCell>
@@ -104,7 +104,13 @@ export default async function AppointmentsPage() {
                                         </DropdownMenu>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )) : (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="text-center h-24">
+                                        No appointments found. This may be because the backend is not running.
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>
