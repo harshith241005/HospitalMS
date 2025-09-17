@@ -1,16 +1,49 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { appointments, prescriptions, reports, users } from "@/lib/placeholder-data";
+import { users } from "@/lib/placeholder-data";
 import { Calendar, FileText, MoreHorizontal, PlusCircle, UploadCloud } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import type { Appointment, Prescription, Report } from "@/lib/types";
 
-export default function PatientDashboardPage() {
+
+async function getPatientDashboardData(patientId: string) {
+    try {
+        const appointmentsPromise = fetch(`http://localhost:3001/api/appointments/patient/${patientId}?status=Scheduled&_limit=2`, { cache: 'no-store' });
+        const prescriptionsPromise = fetch(`http://localhost:3001/api/prescriptions/patient/${patientId}?_limit=2`, { cache: 'no-store' });
+        const reportsPromise = fetch(`http://localhost:3001/api/reports/patient/${patientId}?_limit=1`, { cache: 'no-store' });
+
+        const [appointmentsResponse, prescriptionsResponse, reportsResponse] = await Promise.all([
+            appointmentsPromise,
+            prescriptionsPromise,
+            reportsPromise,
+        ]);
+
+        const upcomingAppointments = appointmentsResponse.ok 
+            ? (await appointmentsResponse.json()).map((a: any) => ({...a, date: new Date(a.date)}))
+            : [];
+        
+        const recentPrescriptions = prescriptionsResponse.ok 
+            ? (await prescriptionsResponse.json()).map((p: any) => ({...p, date: new Date(p.date)}))
+            : [];
+
+        const recentReports = reportsResponse.ok 
+            ? (await reportsResponse.json()).map((r: any) => ({...r, uploadDate: new Date(r.uploadDate)}))
+            : [];
+
+        return { upcomingAppointments, recentPrescriptions, recentReports };
+
+    } catch (error) {
+        console.error("Error fetching patient dashboard data:", error);
+        return { upcomingAppointments: [], recentPrescriptions: [], recentReports: [] };
+    }
+}
+
+
+export default async function PatientDashboardPage() {
     const currentUser = users.find(u => u.role === 'patient');
-    const upcomingAppointments = appointments.filter(a => a.status === 'Scheduled').slice(0, 2);
-    const recentPrescriptions = prescriptions.slice(0, 2);
-    const recentReports = reports.slice(0, 1);
+    const { upcomingAppointments, recentPrescriptions, recentReports } = await getPatientDashboardData(currentUser?.id || 'pat-1');
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -49,7 +82,7 @@ export default function PatientDashboardPage() {
                     <CardContent>
                         {upcomingAppointments.length > 0 ? (
                             <ul className="space-y-4">
-                                {upcomingAppointments.map(appt => (
+                                {upcomingAppointments.map((appt: Appointment) => (
                                     <li key={appt.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-secondary">
                                         <div>
                                             <p className="font-semibold">Dr. {appt.doctor.name}</p>
@@ -79,7 +112,7 @@ export default function PatientDashboardPage() {
                     <CardContent>
                         {recentPrescriptions.length > 0 ? (
                              <ul className="space-y-4">
-                                {recentPrescriptions.map(presc => (
+                                {recentPrescriptions.map((presc: Prescription) => (
                                     <li key={presc.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-secondary">
                                         <div>
                                             <p className="font-semibold">{presc.medications.map(m => m.name).join(', ')}</p>
@@ -105,7 +138,7 @@ export default function PatientDashboardPage() {
                     <CardContent>
                         {recentReports.length > 0 ? (
                             <ul className="space-y-4">
-                                {recentReports.map(report => (
+                                {recentReports.map((report: Report) => (
                                     <li key={report.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-secondary">
                                         <div>
                                             <p className="font-semibold">{report.name}</p>
