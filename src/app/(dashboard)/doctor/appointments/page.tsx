@@ -1,13 +1,42 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { appointments } from "@/lib/placeholder-data";
 import type { Appointment } from "@/lib/types";
 import { Check, X } from "lucide-react";
 import { format } from "date-fns";
 
-export default function DoctorAppointmentsPage() {
-    const pendingAppointments = appointments.filter(a => a.status === 'Pending Approval');
+async function getPendingAppointments(): Promise<Appointment[]> {
+    try {
+        // In a real app, you might have a dedicated endpoint for pending appointments.
+        // For now, we fetch all and filter.
+        const response = await fetch('http://localhost:3001/api/appointments', {
+            cache: 'no-store'
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch appointments. Status: ${response.status}`);
+        }
+
+        const allAppointments = await response.json();
+        
+        // Filter for pending approvals and convert date strings to Date objects
+        return allAppointments
+            .filter((appt: Appointment) => appt.status === 'Pending Approval')
+            .map((appt: any) => ({
+                ...appt,
+                date: new Date(appt.date)
+            }));
+
+    } catch (error) {
+        console.error("Error fetching pending appointments:", error);
+        return [];
+    }
+}
+
+
+export default async function DoctorAppointmentsPage() {
+    const pendingAppointments = await getPendingAppointments();
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -29,7 +58,7 @@ export default function DoctorAppointmentsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {pendingAppointments.map((appointment: Appointment) => (
+                            {pendingAppointments.length > 0 ? pendingAppointments.map((appointment: Appointment) => (
                                 <TableRow key={appointment.id}>
                                     <TableCell className="font-medium">{appointment.patient.name}</TableCell>
                                     <TableCell>{format(appointment.date, "MMMM d, yyyy")}</TableCell>
@@ -44,11 +73,10 @@ export default function DoctorAppointmentsPage() {
                                         </Button>
                                     </TableCell>
                                 </TableRow>
-                            ))}
-                             {pendingAppointments.length === 0 && (
+                            )) : (
                                 <TableRow>
                                     <TableCell colSpan={5} className="text-center text-muted-foreground h-24">
-                                        No pending appointment requests.
+                                        No pending appointment requests. This could also mean the backend is not running.
                                     </TableCell>
                                 </TableRow>
                             )}
