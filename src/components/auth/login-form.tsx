@@ -82,26 +82,16 @@ export default function LoginForm({ userType }: LoginFormProps) {
 
     if (testAccounts[email] && password === '12345678') {
       try {
-        // We need a signed-in user for the dashboard logic to work, but it doesn't have to be the *right* one
-        // for this mock scenario. We can sign in an anonymous or test user.
-        // A more robust mock would involve custom tokens.
-        if (auth.currentUser?.email !== 'test@test.com') {
-             await signInWithEmailAndPassword(auth, 'test@test.com', '12345678').catch(async () => {
-                await auth.createUserWithEmailAndPassword('test@test.com', '12345678');
-                await signInWithEmailAndPassword(auth, 'test@test.com', '12345678');
-             });
-        }
-        
         // Create a mock user object for redirection logic
+        // This completely bypasses Firebase for test accounts
         const mockUser = { email: email } as User;
         await handleRoleBasedRedirect(mockUser);
-
       } catch (e: any) {
         console.error("Test account login error:", e.message);
         toast({
             variant: 'destructive',
             title: 'Test Account Login Failed',
-            description: "Could not sign in with the test account. Please check Firebase connectivity.",
+            description: "Could not redirect to the dashboard.",
         });
       } finally {
         setIsLoading(false);
