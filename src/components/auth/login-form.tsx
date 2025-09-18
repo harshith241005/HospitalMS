@@ -60,10 +60,18 @@ export default function LoginForm({ userType }: LoginFormProps) {
     // after getting the ID token.
     const email = user.email || '';
 
-    if (email.startsWith('admin')) {
-        router.push('/admin');
-    } else if (email.startsWith('doctor')) {
-        router.push('/doctor');
+    if (userType === 'Staff') {
+        if (email.startsWith('admin@')) {
+            router.push('/admin');
+        } else if (email.startsWith('doctor@')) {
+            router.push('/doctor');
+        } else {
+             toast({
+                variant: 'destructive',
+                title: 'Access Denied',
+                description: "This email is not registered as staff.",
+            });
+        }
     } else {
         router.push('/dashboard');
     }
@@ -80,20 +88,19 @@ export default function LoginForm({ userType }: LoginFormProps) {
         'patient@hospital.com': '/dashboard'
     };
 
-    if (testAccounts[email] && password === '12345678') {
+    if (testAccounts[email] && password === 'password123') {
       try {
-        // Sign in a dummy user to establish a session for the test accounts to work
-        // This is a temporary workaround for prototyping.
-        await signInWithEmailAndPassword(auth, 'test@test.com', '12345678');
-        // Now create a mock user object for redirection logic
-        const mockUser = { email: email } as User;
-        await handleRoleBasedRedirect(mockUser);
+        // Use a pre-created test user in Firebase to create a valid session
+        const userCredential = await signInWithEmailAndPassword(auth, 'test@test.com', 'password123');
+        // Now use the email from the form to perform the correct redirect
+        await handleRoleBasedRedirect({ email } as User);
+
       } catch (e: any) {
         console.error("Test account login error:", e.message);
         toast({
             variant: 'destructive',
             title: 'Test Account Login Failed',
-            description: "Could not sign in with the test account. Please check Firebase connectivity.",
+            description: "Could not sign in with the test account. Please check Firebase connectivity and ensure 'test@test.com' user exists with password 'password123'.",
         });
       } finally {
         setIsLoading(false);
@@ -183,6 +190,9 @@ export default function LoginForm({ userType }: LoginFormProps) {
                 )}
               />
             </fieldset>
+            <p className="text-xs text-muted-foreground px-1">
+                For demo purposes, use emails like `patient@hospital.com`, `doctor@hospital.com`, or `admin@hospital.com` with the password `password123`.
+            </p>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In

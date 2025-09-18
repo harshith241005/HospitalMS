@@ -6,6 +6,7 @@ import type { Patient } from "@/lib/types";
 import { Calendar, FileText, Pill } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 
 // This is a mock function to simulate getting the current user.
 const getCurrentPatient = (): Patient => {
@@ -15,17 +16,41 @@ const getCurrentPatient = (): Patient => {
 
 export default function PatientDashboardPage() {
     const patient = getCurrentPatient();
-    const upcomingAppointmentCount = appointments.filter(a => a.patient.id === patient.id && new Date(a.date) >= new Date() && a.status === 'Scheduled').length;
-    const reportCount = reports.filter(r => r.patientId === patient.id).length;
-    const prescriptionCount = prescriptions.filter(p => p.patient.id === patient.id).length;
+    
+    // Use state to make component reactive to data changes
+    const [patientData, setPatientData] = useState({
+        upcomingAppointmentCount: 0,
+        reportCount: 0,
+        prescriptionCount: 0,
+        latestAppointment: null,
+        latestPrescription: null,
+    });
 
-    const latestAppointment = appointments
-        .filter(a => a.patient.id === patient.id && a.status === 'Scheduled')
-        .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+    useEffect(() => {
+        // This function re-calculates the data. In a real app, this might be triggered by a data fetch or a global state update.
+        const updateData = () => {
+            const patientAppointments = appointments.filter(a => a.patient.id === patient.id);
+            const patientPrescriptions = prescriptions.filter(p => p.patient.id === patient.id);
 
-    const latestPrescription = prescriptions
-        .filter(p => p.patient.id === patient.id)
-        .sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+            setPatientData({
+                upcomingAppointmentCount: patientAppointments.filter(a => new Date(a.date) >= new Date() && a.status === 'Scheduled').length,
+                reportCount: reports.filter(r => r.patientId === patient.id).length,
+                prescriptionCount: patientPrescriptions.length,
+                latestAppointment: patientAppointments
+                    .filter(a => a.status === 'Scheduled')
+                    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0] || null,
+                latestPrescription: patientPrescriptions
+                    .sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0] || null,
+            });
+        };
+        
+        updateData();
+        
+        // This is a simple way to "listen" for changes. A more robust solution would use a state manager.
+        const interval = setInterval(updateData, 2000); // Check for updates every 2 seconds
+        return () => clearInterval(interval);
+
+    }, [patient.id]);
 
 
     return (
@@ -40,8 +65,8 @@ export default function PatientDashboardPage() {
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{upcomingAppointmentCount}</div>
-                        <p className="text-xs text-muted-foreground">You have {upcomingAppointmentCount} appointments scheduled.</p>
+                        <div className="text-2xl font-bold">{patientData.upcomingAppointmentCount}</div>
+                        <p className="text-xs text-muted-foreground">You have {patientData.upcomingAppointmentCount} appointments scheduled.</p>
                     </CardContent>
                 </Card>
                  <Card>
@@ -50,7 +75,7 @@ export default function PatientDashboardPage() {
                         <Pill className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{prescriptionCount}</div>
+                        <div className="text-2xl font-bold">{patientData.prescriptionCount}</div>
                         <p className="text-xs text-muted-foreground">Total prescriptions issued.</p>
                     </CardContent>
                 </Card>
@@ -60,7 +85,7 @@ export default function PatientDashboardPage() {
                         <FileText className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{reportCount}</div>
+                        <div className="text-2xl font-bold">{patientData.reportCount}</div>
                         <p className="text-xs text-muted-foreground">Total reports available.</p>
                     </CardContent>
                 </Card>
@@ -72,11 +97,11 @@ export default function PatientDashboardPage() {
                         <CardTitle>Next Appointment</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        {latestAppointment ? (
+                        {patientData.latestAppointment ? (
                             <div>
-                                <p className="text-lg font-semibold">Dr. {latestAppointment.doctor.name}</p>
-                                <p className="text-muted-foreground">{new Date(latestAppointment.date).toLocaleString('default', { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit' })}</p>
-                                <p className="mt-2">{latestAppointment.reason}</p>
+                                <p className="text-lg font-semibold">Dr. {patientData.latestAppointment.doctor.name}</p>
+                                <p className="text-muted-foreground">{new Date(patientData.latestAppointment.date).toLocaleString('default', { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit' })}</p>
+                                <p className="mt-2">{patientData.latestAppointment.reason}</p>
                             </div>
                         ) : (
                             <p className="text-muted-foreground">No upcoming appointments scheduled.</p>
@@ -91,11 +116,11 @@ export default function PatientDashboardPage() {
                         <CardTitle>Latest Prescription</CardTitle>
                     </CardHeader>
                     <CardContent>
-                         {latestPrescription ? (
+                         {patientData.latestPrescription ? (
                             <div>
-                                <p className="text-lg font-semibold">{latestPrescription.medications.map(m => m.name).join(', ')}</p>
-                                <p className="text-muted-foreground">Prescribed by Dr. {latestPrescription.doctor.name} on {new Date(latestPrescription.date).toLocaleDateString()}</p>
-                                <p className="mt-2 text-sm">{latestPrescription.notes}</p>
+                                <p className="text-lg font-semibold">{patientData.latestPrescription.medications.map(m => m.name).join(', ')}</p>
+                                <p className="text-muted-foreground">Prescribed by Dr. {patientData.latestPrescription.doctor.name} on {new Date(patientData.latestPrescription.date).toLocaleDateString()}</p>
+                                <p className="mt-2 text-sm">{patientData.latestPrescription.notes}</p>
                             </div>
                         ) : (
                             <p className="text-muted-foreground">No prescriptions found.</p>

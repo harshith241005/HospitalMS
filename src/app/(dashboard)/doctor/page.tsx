@@ -1,14 +1,22 @@
 
 'use client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { appointments, patients } from "@/lib/placeholder-data";
-import { Calendar, Stethoscope, User, Clock } from "lucide-react";
+import { appointments } from "@/lib/placeholder-data";
+import { Calendar, Clock, User } from "lucide-react";
 import { format } from 'date-fns';
+import { useState, useEffect } from "react";
 
 export default function DoctorDashboardPage() {
     const loggedInDoctorId = 'doc-1';
     
-    const doctorAppointments = appointments.filter(a => a.doctor.id === loggedInDoctorId);
+    // Use state to make the component reactive to changes in the placeholder data
+    const [doctorAppointments, setDoctorAppointments] = useState(() => appointments.filter(a => a.doctor.id === loggedInDoctorId));
+
+    // This effect could be triggered by a global state change in a real app
+    useEffect(() => {
+        setDoctorAppointments(appointments.filter(a => a.doctor.id === loggedInDoctorId));
+    }, [appointments]); // Dependency on the imported array itself
+
     const todayAppointments = doctorAppointments.filter(a => format(new Date(a.date), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && a.status === 'Scheduled');
     const pendingApprovals = doctorAppointments.filter(a => a.status === 'Pending Approval').length;
     const totalPatients = new Set(doctorAppointments.map(a => a.patient.id)).size;
