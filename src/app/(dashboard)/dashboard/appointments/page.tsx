@@ -69,7 +69,7 @@ export default function AppointmentsPage() {
         };
 
         // Add to the "database"
-        placeholderAppointments.push(newAppointment);
+        placeholderAppointments.unshift(newAppointment);
 
         // Update the local state to trigger a re-render
         setPatientAppointments([...placeholderAppointments]);
@@ -248,4 +248,5 @@ export default function AppointmentsPage() {
             </Card>
         </div>
     );
-}
+
+    
