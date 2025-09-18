@@ -17,6 +17,7 @@ export default function DoctorAppointmentsPage() {
     const [pendingAppointments, setPendingAppointments] = useState<Appointment[]>([]);
 
     useEffect(() => {
+        // Filter appointments from the central placeholder data
         setPendingAppointments(appointments.filter(a => a.doctor.id === loggedInDoctorId && a.status === 'Pending Approval'));
     }, []);
 
@@ -25,11 +26,14 @@ export default function DoctorAppointmentsPage() {
         if (appointmentIndex > -1) {
             const appointment = appointments[appointmentIndex];
             if (action === 'approve') {
+                // Directly mutate the placeholder data to simulate a DB update
                 appointments[appointmentIndex].status = 'Scheduled';
             } else {
                 appointments[appointmentIndex].status = 'Canceled';
             }
+            // Update the local state to re-render the component
             setPendingAppointments(prev => prev.filter(a => a.id !== appointmentId));
+            
             toast({
                 title: `Appointment ${action === 'approve' ? 'Approved' : 'Rejected'}`,
                 description: `The appointment with ${appointment.patient.name} has been ${action === 'approve' ? 'scheduled' : 'rejected'}.`,

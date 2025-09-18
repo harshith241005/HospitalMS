@@ -36,16 +36,14 @@ const appointmentSchema = z.object({
 });
 
 // This is a mock function to simulate getting the current user.
-// In a real app, this would come from an auth context.
 const getCurrentPatient = (): Patient => {
     return users.find(u => u.email === 'patient@hospital.com') as Patient;
 }
 
 
 export default function AppointmentsPage() {
-    // In a real app, you would fetch and update appointments from a backend.
-    // For this simulation, we just modify the placeholder data in memory.
-    const [patientAppointments, setPatientAppointments] = useState(placeholderAppointments);
+    // This state now acts as a trigger to re-render the component when the underlying placeholder data changes.
+    const [appointments, setAppointments] = useState(placeholderAppointments);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { toast } = useToast();
     const currentPatient = getCurrentPatient();
@@ -69,11 +67,11 @@ export default function AppointmentsPage() {
             reason: values.reason,
         };
 
-        // Add to the "database"
+        // Directly mutate the central placeholder data array
         placeholderAppointments.unshift(newAppointment);
 
         // Update the local state to trigger a re-render
-        setPatientAppointments([...placeholderAppointments]);
+        setAppointments([...placeholderAppointments]);
         
         toast({
             title: "Appointment Requested",
@@ -83,7 +81,8 @@ export default function AppointmentsPage() {
         form.reset();
     };
     
-    const currentUserAppointments = patientAppointments.filter(a => a.patient.id === currentPatient.id);
+    // Filter appointments directly from the potentially updated central array
+    const currentUserAppointments = appointments.filter(a => a.patient.id === currentPatient.id);
     const upcomingAppointments = currentUserAppointments.filter(a => new Date(a.date) >= new Date() && a.status !== 'Canceled');
     const pastAppointments = currentUserAppointments.filter(a => new Date(a.date) < new Date() || a.status === 'Canceled');
 
@@ -251,5 +250,3 @@ export default function AppointmentsPage() {
     );
 
 }
-
-    

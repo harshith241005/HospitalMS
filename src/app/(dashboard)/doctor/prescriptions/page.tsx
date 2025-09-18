@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -31,6 +32,7 @@ const getCurrentDoctor = () => doctors.find(d => d.id === 'doc-1')!;
 
 export default function DoctorPrescriptionsPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    // Use the central placeholder data and a function to update it
     const [prescriptions, setPrescriptions] = useState(placeholderPrescriptions);
     const { toast } = useToast();
     const currentDoctor = getCurrentDoctor();
@@ -51,7 +53,7 @@ export default function DoctorPrescriptionsPage() {
         
         const newPrescription: Prescription = {
             id: `pres-${Date.now()}`,
-            appointmentId: `appt-${Date.now()}`, // Mock appointment ID
+            appointmentId: `appt-${Date.now()}`, // Mock appointment ID for now
             doctor: currentDoctor,
             patient: selectedPatient,
             date: new Date(),
@@ -64,10 +66,10 @@ export default function DoctorPrescriptionsPage() {
             fullText: `Patient: ${selectedPatient.name}. Medication: ${values.medicationName} ${values.dosage}, ${values.frequency}. Notes: ${values.notes}`
         };
 
-        // Add to the "database"
-        placeholderPrescriptions.push(newPrescription);
+        // Add to the central "database"
+        placeholderPrescriptions.unshift(newPrescription);
 
-        // Update local state to trigger re-render
+        // Update local state to trigger re-render of this component
         setPrescriptions([...placeholderPrescriptions]);
         
         toast({
@@ -189,15 +191,14 @@ export default function DoctorPrescriptionsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {doctorPrescriptions.map(p => (
+                            {doctorPrescriptions.length > 0 ? doctorPrescriptions.map(p => (
                                 <TableRow key={p.id}>
                                     <TableCell>{p.patient.name}</TableCell>
                                     <TableCell>{p.medications.map(m => m.name).join(', ')}</TableCell>
                                     <TableCell>{format(new Date(p.date), "MMMM d, yyyy")}</TableCell>
                                 </TableRow>
-                            ))}
-                             {doctorPrescriptions.length === 0 && (
-                                <TableRow>
+                            )) : (
+                                 <TableRow>
                                     <TableCell colSpan={3} className="h-24 text-center">
                                         <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
                                         <p className="mt-2">No prescriptions found.</p>
