@@ -91,7 +91,7 @@ export default function LoginForm({ userType }: LoginFormProps) {
 
     if (testAccounts[email] && password === 'password123') {
       // Simulate a successful login for demo accounts without calling Firebase
-      await handleRoleBasedRedirect({ email } as User);
+      router.push(`${testAccounts[email]}?logged_in_as=${email}`);
       return;
     }
 
@@ -119,21 +119,18 @@ export default function LoginForm({ userType }: LoginFormProps) {
   }
 
   async function handleGoogleSignIn() {
-    const provider = new GoogleAuthProvider();
     setIsLoading(true);
-    try {
-      const result = await signInWithPopup(auth, provider);
-      await handleRoleBasedRedirect(result.user);
-    } catch (error: any) {
-      console.error('Google Sign-In Error:', error.message);
-      toast({
-        variant: 'destructive',
-        title: 'Google Sign-In Failed',
-        description: "Could not sign in with Google. Please try again.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    // Simulate a successful Google sign-in for the prototype
+    const mockUser = {
+      email: 'patient.google@example.com',
+      displayName: 'Google User',
+      photoURL: `https://picsum.photos/seed/google-user/200/200`,
+      uid: 'mock-google-uid'
+    };
+
+    // Since this is for patients, we redirect directly to the patient dashboard
+    // and pass the mock user's email to simulate the logged-in state.
+    router.push(`/dashboard?logged_in_as=${mockUser.email}`);
   }
 
   return (
