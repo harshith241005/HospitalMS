@@ -82,8 +82,10 @@ export default function LoginForm({ userType }: LoginFormProps) {
 
     if (testAccounts[email] && password === '12345678') {
       try {
-        // Create a mock user object for redirection logic
-        // This completely bypasses Firebase for test accounts
+        // Sign in a dummy user to establish a session for the test accounts to work
+        // This is a temporary workaround for prototyping.
+        await signInWithEmailAndPassword(auth, 'test@test.com', '12345678');
+        // Now create a mock user object for redirection logic
         const mockUser = { email: email } as User;
         await handleRoleBasedRedirect(mockUser);
       } catch (e: any) {
@@ -91,7 +93,7 @@ export default function LoginForm({ userType }: LoginFormProps) {
         toast({
             variant: 'destructive',
             title: 'Test Account Login Failed',
-            description: "Could not redirect to the dashboard.",
+            description: "Could not sign in with the test account. Please check Firebase connectivity.",
         });
       } finally {
         setIsLoading(false);
