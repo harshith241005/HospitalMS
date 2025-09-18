@@ -1,15 +1,25 @@
+'use client';
 
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Calendar } from "lucide-react";
 import { format } from "date-fns";
-import { users } from "@/lib/placeholder-data";
-
+import { appointments, doctors } from "@/lib/placeholder-data";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar as CalendarPicker } from '@/components/ui/calendar';
 
 const statusColors: Record<AppointmentStatus, string> = {
     Scheduled: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
@@ -18,97 +28,188 @@ const statusColors: Record<AppointmentStatus, string> = {
     'Pending Approval': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
 };
 
-async function getPatientAppointments(patientId: string): Promise<Appointment[]> {
-    // In a real app, you would get the logged-in user's ID.
-    // For this prototype, we'll fetch appointments for a specific patient.
-    // Ensure your backend has an endpoint like /api/appointments/patient/:patientId
-    try {
-        const response = await fetch(`http://localhost:3001/api/appointments/patient/${patientId}`, { 
-          cache: 'no-store' 
-        });
-    
-        if (!response.ok) {
-          throw new Error(`Failed to fetch appointments. Status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        // The backend might return date strings, so we need to convert them to Date objects
-        return data.map((appt: any) => ({
-            ...appt,
-            date: new Date(appt.date)
-        }));
-    
-      } catch (error) {
-        console.error("Error fetching patient appointments:", error);
-        return []; 
-      }
-}
+const appointmentSchema = z.object({
+    doctorId: z.string().min(1, "Please select a doctor."),
+    date: z.date({ required_error: "Please select a date." }),
+    reason: z.string().min(1, "Please provide a reason for your visit."),
+});
 
-export default async function AppointmentsPage() {
-    // In a real app, you would get the logged-in user's ID from an auth context.
-    // For this prototype, we'll assume the user is the first patient.
-    const currentPatient = users.find(u => u.role === 'patient');
-    const patientAppointments = await getPatientAppointments(currentPatient?.id || 'pat-1');
+export default function AppointmentsPage() {
+    const patientAppointments = appointments; // Placeholder
+    const upcomingAppointments = patientAppointments.filter(a => new Date(a.date) >= new Date() && a.status !== 'Canceled');
+    const pastAppointments = patientAppointments.filter(a => new Date(a.date) < new Date() || a.status === 'Canceled');
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const { toast } = useToast();
+
+    const form = useForm<z.infer<typeof appointmentSchema>>({
+        resolver: zodResolver(appointmentSchema),
+        defaultValues: {
+            reason: "",
+        },
+    });
+
+    const onSubmit = (values: z.infer<typeof appointmentSchema>) => {
+        console.log("New Appointment Request:", values);
+        toast({
+            title: "Appointment Requested",
+            description: `Your request has been sent and is pending approval.`,
+        });
+        setIsDialogOpen(false);
+        form.reset();
+    };
 
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
             <div className="flex items-center justify-between space-y-2">
                 <h2 className="text-3xl font-bold tracking-tight font-headline">My Appointments</h2>
-                <Button>
-                    <PlusCircle className="mr-2 h-4 w-4" /> Book New Appointment
-                </Button>
+                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button>
+                            <PlusCircle className="mr-2 h-4 w-4" /> Book New Appointment
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Book an Appointment</DialogTitle>
+                        </DialogHeader>
+                         <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+                                <FormField
+                                    control={form.control}
+                                    name="doctorId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Doctor</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select a doctor" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {doctors.map(d => <SelectItem key={d.id} value={d.id}>Dr. {d.name} ({d.specialization})</SelectItem>)}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="date"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel>Appointment Date</FormLabel>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant={"outline"}
+                                                            className={cn(
+                                                                "w-full pl-3 text-left font-normal",
+                                                                !field.value && "text-muted-foreground"
+                                                            )}
+                                                            >
+                                                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                                                            <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-auto p-0" align="start">
+                                                    <CalendarPicker
+                                                        mode="single"
+                                                        selected={field.value}
+                                                        onSelect={field.onChange}
+                                                        disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
+                                                        initialFocus
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="reason"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Reason for Visit</FormLabel>
+                                            <FormControl>
+                                                <Textarea placeholder="Briefly describe the reason for your visit..." {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button type="submit" className="w-full">Request Appointment</Button>
+                            </form>
+                        </Form>
+                    </DialogContent>
+                </Dialog>
             </div>
             <Card>
                 <CardHeader>
-                    <CardTitle>Appointment History</CardTitle>
-                    <CardDescription>View and manage all your scheduled, completed, and canceled appointments.</CardDescription>
+                    <CardTitle>Upcoming Appointments</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Doctor</TableHead>
-                                <TableHead>Specialization</TableHead>
                                 <TableHead>Date</TableHead>
-                                <TableHead>Time</TableHead>
                                 <TableHead>Status</TableHead>
-                                <TableHead><span className="sr-only">Actions</span></TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {patientAppointments.length > 0 ? patientAppointments.map((appointment: Appointment) => (
+                            {upcomingAppointments.length > 0 ? upcomingAppointments.map((appointment: Appointment) => (
                                 <TableRow key={appointment.id}>
                                     <TableCell className="font-medium">{appointment.doctor.name}</TableCell>
-                                    <TableCell>{appointment.doctor.specialization}</TableCell>
-                                    <TableCell>{format(appointment.date, "MMMM d, yyyy")}</TableCell>
-                                    <TableCell>{format(appointment.date, "h:mm a")}</TableCell>
+                                    <TableCell>{format(appointment.date, "MMMM d, yyyy 'at' h:mm a")}</TableCell>
                                     <TableCell>
                                         <Badge className={cn("border-transparent", statusColors[appointment.status])}>
                                             {appointment.status}
                                         </Badge>
                                     </TableCell>
+                                </TableRow>
+                            )) : (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="text-center h-24">No upcoming appointments.</TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+
+             <Card>
+                <CardHeader>
+                    <CardTitle>Past Appointments</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Doctor</TableHead>
+                                <TableHead>Date</TableHead>
+                                <TableHead>Status</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {pastAppointments.length > 0 ? pastAppointments.map((appointment: Appointment) => (
+                                <TableRow key={appointment.id}>
+                                    <TableCell className="font-medium">{appointment.doctor.name}</TableCell>
+                                    <TableCell>{format(appointment.date, "MMMM d, yyyy")}</TableCell>
                                     <TableCell>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                                    <span className="sr-only">Open menu</span>
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem>View Details</DropdownMenuItem>
-                                                {appointment.status === 'Scheduled' && <DropdownMenuItem>Reschedule</DropdownMenuItem>}
-                                                {appointment.status === 'Scheduled' && <DropdownMenuItem className="text-red-600">Cancel</DropdownMenuItem>}
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                        <Badge className={cn("border-transparent", statusColors[appointment.status])}>
+                                            {appointment.status}
+                                        </Badge>
                                     </TableCell>
                                 </TableRow>
                             )) : (
                                 <TableRow>
-                                    <TableCell colSpan={6} className="text-center h-24">
-                                        No appointments found. This may be because the backend is not running.
-                                    </TableCell>
+                                    <TableCell colSpan={3} className="text-center h-24">No past appointments.</TableCell>
                                 </TableRow>
                             )}
                         </TableBody>
@@ -118,3 +219,4 @@ export default async function AppointmentsPage() {
         </div>
     );
 }
+

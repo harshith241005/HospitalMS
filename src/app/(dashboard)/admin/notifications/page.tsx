@@ -1,3 +1,6 @@
-import NotificationsPage from '../../dashboard/notifications/page';
+import { redirect } from 'next/navigation';
 
-export default NotificationsPage;
+// This page is not part of the final prompt, redirecting to the main admin dashboard.
+export default function NotificationsPage() {
+    redirect('/admin');
+}

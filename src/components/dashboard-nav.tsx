@@ -16,7 +16,6 @@ import {
   LayoutDashboard,
   Calendar,
   FileText,
-  Upload,
   Stethoscope,
   Users,
   LogOut,
@@ -28,39 +27,37 @@ import {
   ClipboardCheck,
   Video,
   LineChart,
+  Wallet,
+  TestTube,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Button } from './ui/button';
-import { signOut, getAuth, onAuthStateChanged } from 'firebase/auth';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
 type UserRole = 'admin' | 'doctor' | 'patient';
 
 const adminNav = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/doctors', label: 'Doctors', icon: Stethoscope },
-  { href: '/admin/patients', label: 'Patients', icon: User },
-  { href: '/admin/staff', label: 'Staff', icon: Users },
-  { href: '/admin/appointments', label: 'Appointments', icon: Calendar },
-  { href: '/admin/attendance', label: 'Attendance', icon: ClipboardCheck },
-  { href: '/admin/notifications', label: 'Notifications', icon: Bell },
+  { href: '/admin/doctors', label: 'Manage Doctors', icon: Stethoscope },
+  { href: '/admin/patients', label: 'Manage Patients', icon: Users },
+  { href: '/admin/appointments', label: 'View Appointments', icon: Calendar },
+  { href: '/admin/reports', label: 'Reports & Analytics', icon: LineChart },
 ];
 
 const doctorNav = [
   { href: '/doctor', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/doctor/schedule', label: 'Schedule', icon: Calendar },
-  { href: '/doctor/appointments', label: 'Appointments', icon: Users },
-  { href: '/doctor/notifications', label: 'Notifications', icon: Bell },
+  { href: '/doctor/appointments', label: 'My Appointments', icon: Users },
+  { href: '/doctor/schedule', label: 'Schedule Management', icon: Calendar },
+  { href: '/doctor/prescriptions', label: 'Prescriptions', icon: FileText },
+  { href: '/doctor/history', label: 'Patient History', icon: User },
 ];
 
 const patientNav = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/dashboard/appointments', label: 'Appointments', icon: Calendar },
-  { href: '/dashboard/prescriptions', label: 'Prescriptions', icon: FileText },
-  { href: '/dashboard/reports', label: 'Reports', icon: Upload },
-  { href: '/dashboard/video-consultation', label: 'Video Call', icon: Video},
-  { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
+  { href: '/dashboard/appointments', label: 'Book Appointment', icon: Calendar },
+  { href: '/dashboard/reports', label: 'Reports', icon: FileText },
+  { href: '/dashboard/billing', label: 'Billing & Payments', icon: Wallet },
 ];
 
 const navItems: Record<UserRole, { href: string; label: string; icon: React.ElementType }[]> = {
@@ -73,42 +70,27 @@ function ThemeToggle() {
   const { setTheme } = useTheme();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="w-full justify-start gap-2 px-2">
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="group-data-[collapsible=icon]:hidden">Toggle theme</span>
-            <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start">
-        <DropdownMenuItem onClick={() => setTheme('light')}>
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <SidebarMenuButton tooltip="Toggle Theme" asChild>
+      <div>
+        <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+        <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+        <span className="group-data-[collapsible=icon]:hidden" onClick={() => setTheme(useTheme().theme === 'dark' ? 'light' : 'dark')}>Toggle theme</span>
+        <span className="sr-only">Toggle theme</span>
+      </div>
+    </SidebarMenuButton>
   );
 }
-
 
 export function DashboardNav() {
   const pathname = usePathname();
   const router = useRouter();
   const [userRole, setUserRole] = useState<UserRole>('patient');
-  const [currentUser, setCurrentUser] = useState<{name: string, email: string} | null>(null);
+  const [currentUser, setCurrentUser] = useState<{name: string, email: string, avatarUrl?: string, dataAiHint?: string} | null>(null);
   
   useEffect(() => {
-    if (pathname.startsWith('/admin')) {
-      setUserRole('admin');
-    } else if (pathname.startsWith('/doctor')) {
-      setUserRole('doctor');
+    const role = pathname.split('/')[1];
+    if (role === 'admin' || role === 'doctor') {
+      setUserRole(role);
     } else {
       setUserRole('patient');
     }
@@ -117,16 +99,32 @@ export function DashboardNav() {
    useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        const email = user.email || '';
+        let role: UserRole = 'patient';
+        if (email.startsWith('admin')) {
+            role = 'admin';
+        } else if (email.startsWith('doctor')) {
+            role = 'doctor';
+        }
+        
         setCurrentUser({
             name: user.displayName || 'User',
-            email: user.email || 'user@example.com'
-        })
+            email: email,
+        });
+
+        // Redirect if user is on the wrong dashboard
+        const currentPathRole = pathname.split('/')[1];
+        const expectedPathRole = role === 'patient' ? 'dashboard' : role;
+        if (currentPathRole !== expectedPathRole && currentPathRole !== 'register' && currentPathRole !== '') {
+           router.push(`/${expectedPathRole}`);
+        }
+
       } else {
         router.push('/');
       }
     });
     return () => unsubscribe();
-  }, [router]);
+  }, [pathname, router]);
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -135,7 +133,6 @@ export function DashboardNav() {
 
   const currentNav = navItems[userRole];
   const settingsPath = `/${userRole === 'patient' ? 'dashboard' : userRole}/settings`;
-
 
   return (
     <>
@@ -192,11 +189,12 @@ export function DashboardNav() {
         <div className="p-2 mt-2 border-t group-data-[collapsible=icon]:hidden">
           <div className="flex items-center gap-3">
             <Avatar>
+              <AvatarImage src={currentUser?.avatarUrl} alt={currentUser?.name} data-ai-hint={currentUser?.dataAiHint} />
               <AvatarFallback>{currentUser?.name?.charAt(0)}</AvatarFallback>
             </Avatar>
-            <div className="flex flex-col text-sm">
-                <span className="font-semibold">{currentUser?.name}</span>
-                <span className="text-muted-foreground">{currentUser?.email}</span>
+            <div className="flex flex-col text-sm truncate">
+                <span className="font-semibold truncate">{currentUser?.name}</span>
+                <span className="text-muted-foreground truncate">{currentUser?.email}</span>
             </div>
           </div>
         </div>
