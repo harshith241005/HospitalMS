@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview Summarizes and explains a patient's prescription using AI.
@@ -8,7 +9,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
 
 const SummarizeAndExplainPrescriptionInputSchema = z.object({
   prescriptionText: z

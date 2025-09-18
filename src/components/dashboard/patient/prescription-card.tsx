@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -57,3 +58,4 @@ export default function PrescriptionCard({ prescription }: PrescriptionCardProps
         </Card>
     );
 }
+

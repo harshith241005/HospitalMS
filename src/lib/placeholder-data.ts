@@ -1,3 +1,4 @@
+
 import type { User, Patient, Doctor, Admin, Appointment, Prescription, Report, Notification } from './types';
 
 export const users: User[] = [
