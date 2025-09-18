@@ -39,6 +39,15 @@ const formSchema = z.object({
   }),
 });
 
+// Mock user object for demonstration purposes
+const mockUser = (email: string): User => ({
+  email: email,
+  displayName: email.split('@')[0],
+  uid: `mock-${email}`,
+  // Add other user properties if needed, ensuring they match the User type
+} as User);
+
+
 export default function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
@@ -68,6 +77,45 @@ export default function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
+    const { email, password } = values;
+    const testEmails = ['admin@hospital.com', 'doctor@hospital.com', 'patient@hospital.com'];
+    
+    // Check for test accounts with default password
+    if (testEmails.includes(email) && password === '12345678') {
+      try {
+        // Simulate a successful sign-in by creating a mock user object
+        // and calling the redirect logic directly. We need to sign in anonymously
+        // to make sure the onAuthStateChanged listener is triggered correctly.
+        const userCredential = await signInWithEmailAndPassword(auth, 'test@test.com', '12345678');
+        
+        // We override the user object with our mock user.
+        // In a real scenario with a backend, you'd get a custom token and sign in with that.
+        const mockUserObject = { ...userCredential.user, email: email, displayName: email.split('@')[0] };
+
+        await handleRoleBasedRedirect(mockUserObject as User);
+
+      } catch (e) {
+          // This is a fallback to create the test user if it doesn't exist.
+          // This should only run once.
+        try {
+            await auth.createUserWithEmailAndPassword('test@test.com', '12345678');
+            const userCredential = await signInWithEmailAndPassword(auth, 'test@test.com', '12345678');
+            const mockUserObject = { ...userCredential.user, email: email, displayName: email.split('@')[0] };
+            await handleRoleBasedRedirect(mockUserObject as User);
+        } catch (finalError) {
+             toast({
+                variant: 'destructive',
+                title: 'Test Account Setup Failed',
+                description: "Could not create the necessary test account. Please check Firebase connection.",
+            });
+        }
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       await handleRoleBasedRedirect(userCredential.user);
@@ -76,7 +124,10 @@ export default function LoginForm() {
       let description = "Invalid credentials. Please check your email and password.";
       if (error.code === 'auth/invalid-credential') {
         // No console log needed here as it's an expected user error.
-      } else {
+      } else if (error.code === 'auth/user-not-found') {
+          description = "No account found with this email. Please sign up.";
+      }
+      else {
         console.error('Authentication error:', error.message);
         description = "An unexpected error occurred. Please try again.";
       }
