@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../lib/firebase'; // Assuming firebase config is in lib
+import dynamic from 'next/dynamic';
 
 import LoginComponent from '../components/Login';
 import AdminDashboard from '../components/AdminDashboard';
@@ -27,7 +28,9 @@ const AppWrapper = () => {
         }
       } else {
         // If not logged in, ensure they are on the login page
-        navigate('/');
+        if (window.location.pathname !== '/') {
+            navigate('/');
+        }
       }
     });
 
@@ -46,13 +49,15 @@ const AppWrapper = () => {
   );
 };
 
+const AppWithRouter = () => (
+    <Router>
+        <AppWrapper />
+    </Router>
+);
 
-const App = () => {
-    return (
-        <Router>
-            <AppWrapper />
-        </Router>
-    )
-}
+const App = dynamic(() => Promise.resolve(AppWithRouter), {
+    ssr: false,
+});
+
 
 export default App;
