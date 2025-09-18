@@ -1,9 +1,11 @@
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { appointments } from "@/lib/placeholder-data";
 
 const statusColors: Record<AppointmentStatus, string> = {
     Scheduled: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
@@ -12,32 +14,9 @@ const statusColors: Record<AppointmentStatus, string> = {
     'Pending Approval': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
 };
 
-async function getAppointments(): Promise<Appointment[]> {
-    try {
-        const response = await fetch('http://localhost:3001/api/appointments', { 
-          cache: 'no-store' 
-        });
-    
-        if (!response.ok) {
-          throw new Error(`Failed to fetch appointments. Status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        // The backend might return date strings, so we need to convert them to Date objects
-        return data.map((appt: any) => ({
-            ...appt,
-            date: new Date(appt.date)
-        }));
-    
-      } catch (error) {
-        console.error("Error fetching appointments:", error);
-        return []; 
-      }
-}
 
-
-export default async function AllAppointmentsPage() {
-    const appointments = await getAppointments();
+export default function AllAppointmentsPage() {
+    const allAppointments = appointments;
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -60,10 +39,10 @@ export default async function AllAppointmentsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {appointments.length > 0 ? appointments.map((appointment: Appointment) => (
+                            {allAppointments.length > 0 ? allAppointments.map((appointment: Appointment) => (
                                 <TableRow key={appointment.id}>
                                     <TableCell className="font-medium">{appointment.patient.name}</TableCell>
-                                    <TableCell>{appointment.doctor.name}</TableCell>
+                                    <TableCell>Dr. {appointment.doctor.name}</TableCell>
                                     <TableCell>{format(appointment.date, "MMMM d, yyyy")}</TableCell>
                                     <TableCell>{format(appointment.date, "h:mm a")}</TableCell>
                                     <TableCell>
@@ -76,7 +55,7 @@ export default async function AllAppointmentsPage() {
                             )) : (
                                 <TableRow>
                                     <TableCell colSpan={6} className="text-center h-24">
-                                        No appointments found. This may be because the backend is not running.
+                                        No appointments found.
                                     </TableCell>
                                 </TableRow>
                             )}

@@ -1,42 +1,38 @@
 
+'use client';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { appointments } from "@/lib/placeholder-data";
 import type { Appointment } from "@/lib/types";
 import { Check, X } from "lucide-react";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
-async function getPendingAppointments(): Promise<Appointment[]> {
-    try {
-        // In a real app, you might have a dedicated endpoint for pending appointments.
-        // For now, we fetch all and filter.
-        const response = await fetch('http://localhost:3001/api/appointments', {
-            cache: 'no-store'
-        });
+export default function DoctorAppointmentsPage() {
+    const { toast } = useToast();
+    // In a real app, you'd get the logged-in doctor's ID
+    const loggedInDoctorId = 'doc-1'; 
+    const [pendingAppointments, setPendingAppointments] = useState<Appointment[]>(
+        appointments.filter(a => a.doctor.id === loggedInDoctorId && a.status === 'Pending Approval')
+    );
 
-        if (!response.ok) {
-            throw new Error(`Failed to fetch appointments. Status: ${response.status}`);
+    const handleAppointmentAction = (appointmentId: string, action: 'approve' | 'reject') => {
+        const appointment = appointments.find(a => a.id === appointmentId);
+        if (appointment) {
+            if (action === 'approve') {
+                appointment.status = 'Scheduled';
+            } else {
+                appointment.status = 'Canceled';
+            }
+            setPendingAppointments(prev => prev.filter(a => a.id !== appointmentId));
+            toast({
+                title: `Appointment ${action === 'approve' ? 'Approved' : 'Rejected'}`,
+                description: `The appointment with ${appointment.patient.name} has been ${action === 'approve' ? 'scheduled' : 'rejected'}.`,
+            });
         }
-
-        const allAppointments = await response.json();
-        
-        // Filter for pending approvals and convert date strings to Date objects
-        return allAppointments
-            .filter((appt: Appointment) => appt.status === 'Pending Approval')
-            .map((appt: any) => ({
-                ...appt,
-                date: new Date(appt.date)
-            }));
-
-    } catch (error) {
-        console.error("Error fetching pending appointments:", error);
-        return [];
-    }
-}
-
-
-export default async function DoctorAppointmentsPage() {
-    const pendingAppointments = await getPendingAppointments();
+    };
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -65,10 +61,10 @@ export default async function DoctorAppointmentsPage() {
                                     <TableCell>{format(appointment.date, "h:mm a")}</TableCell>
                                     <TableCell>{appointment.reason}</TableCell>
                                     <TableCell className="text-right">
-                                        <Button variant="outline" size="sm" className="mr-2 border-green-500 text-green-500 hover:bg-green-50 hover:text-green-600">
+                                        <Button variant="outline" size="sm" className="mr-2 border-green-500 text-green-500 hover:bg-green-50 hover:text-green-600" onClick={() => handleAppointmentAction(appointment.id, 'approve')}>
                                             <Check className="mr-1 h-4 w-4" /> Approve
                                         </Button>
-                                        <Button variant="outline" size="sm" className="border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600">
+                                        <Button variant="outline" size="sm" className="border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600" onClick={() => handleAppointmentAction(appointment.id, 'reject')}>
                                             <X className="mr-1 h-4 w-4" /> Reject
                                         </Button>
                                     </TableCell>
@@ -76,7 +72,7 @@ export default async function DoctorAppointmentsPage() {
                             )) : (
                                 <TableRow>
                                     <TableCell colSpan={5} className="text-center text-muted-foreground h-24">
-                                        No pending appointment requests. This could also mean the backend is not running.
+                                        No pending appointment requests.
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -87,3 +83,4 @@ export default async function DoctorAppointmentsPage() {
         </div>
     );
 }
+

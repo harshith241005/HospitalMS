@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -23,17 +24,16 @@ import {
   Settings,
   Moon,
   Sun,
-  Bell,
-  ClipboardCheck,
-  Video,
   LineChart,
   Wallet,
-  TestTube,
+  PenSquare,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
-import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { users } from '@/lib/placeholder-data';
+import type { User as AppUser } from '@/lib/types';
 
 type UserRole = 'admin' | 'doctor' | 'patient';
 
@@ -47,17 +47,17 @@ const adminNav = [
 
 const doctorNav = [
   { href: '/doctor', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/doctor/appointments', label: 'My Appointments', icon: Users },
-  { href: '/doctor/schedule', label: 'Schedule Management', icon: Calendar },
-  { href: '/doctor/prescriptions', label: 'Prescriptions', icon: FileText },
-  { href: '/doctor/history', label: 'Patient History', icon: User },
+  { href: '/doctor/appointments', label: 'Appointment Requests', icon: Users },
+  { href: '/doctor/schedule', label: 'My Schedule', icon: Calendar },
+  { href: '/doctor/prescriptions', label: 'Create Prescription', icon: PenSquare },
+  { href: '/doctor/history', label: 'Patient History', icon: FileText },
 ];
 
 const patientNav = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/dashboard/appointments', label: 'My Appointments', icon: Calendar },
-  { href: '/dashboard/reports', label: 'Reports', icon: FileText },
-  { href: '/dashboard/billing', label: 'Billing & Payments', icon: Wallet },
+  { href: '/dashboard/reports', label: 'My Records', icon: FileText },
+  { href: '/dashboard/billing', label: 'Billing', icon: Wallet },
 ];
 
 const navItems: Record<UserRole, { href: string; label: string; icon: React.ElementType }[]> = {
@@ -67,16 +67,14 @@ const navItems: Record<UserRole, { href: string; label: string; icon: React.Elem
 };
 
 function ThemeToggle() {
-  const { setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
 
   return (
-    <SidebarMenuButton tooltip="Toggle Theme" asChild>
-      <div>
+    <SidebarMenuButton tooltip="Toggle Theme" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
         <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
         <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-        <span className="group-data-[collapsible=icon]:hidden" onClick={() => setTheme(useTheme().theme === 'dark' ? 'light' : 'dark')}>Toggle theme</span>
+        <span className="group-data-[collapsible=icon]:hidden">Toggle theme</span>
         <span className="sr-only">Toggle theme</span>
-      </div>
     </SidebarMenuButton>
   );
 }
@@ -85,44 +83,49 @@ export function DashboardNav() {
   const pathname = usePathname();
   const router = useRouter();
   const [userRole, setUserRole] = useState<UserRole>('patient');
-  const [currentUser, setCurrentUser] = useState<{name: string, email: string, avatarUrl?: string, dataAiHint?: string} | null>(null);
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
   
   useEffect(() => {
-    const role = pathname.split('/')[1];
-    if (role === 'admin' || role === 'doctor') {
-      setUserRole(role);
-    } else {
-      setUserRole('patient');
-    }
-  }, [pathname]);
+    const handleAuthChange = (firebaseUser: FirebaseUser | null) => {
+      if (firebaseUser) {
+        const email = firebaseUser.email || '';
+        let matchedUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
 
-   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const email = user.email || '';
-        let role: UserRole = 'patient';
-        if (email.startsWith('admin')) {
-            role = 'admin';
-        } else if (email.startsWith('doctor')) {
-            role = 'doctor';
+        if (email.startsWith('admin@')) matchedUser = users.find(u => u.role === 'admin');
+        else if (email.startsWith('doctor@')) matchedUser = users.find(u => u.role === 'doctor');
+        else if (email.startsWith('patient@')) matchedUser = users.find(u => u.role === 'patient');
+
+        if (matchedUser) {
+          setCurrentUser(matchedUser);
+          setUserRole(matchedUser.role);
+          const expectedPathRole = matchedUser.role === 'patient' ? 'dashboard' : matchedUser.role;
+          const currentPathRole = pathname.split('/')[1];
+
+          if (currentPathRole !== expectedPathRole && !['login', 'register', ''].includes(currentPathRole)) {
+             router.push(`/${expectedPathRole}`);
+          }
+        } else {
+           // Default to patient for new registrations
+           const newUser: AppUser = {
+             id: firebaseUser.uid,
+             name: firebaseUser.displayName || 'New User',
+             email: email,
+             role: 'patient',
+             avatarUrl: firebaseUser.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/200/200`,
+             dataAiHint: 'person'
+           };
+           setCurrentUser(newUser);
+           setUserRole('patient');
+           if(pathname.split('/')[1] !== 'dashboard') {
+             router.push('/dashboard');
+           }
         }
-        
-        setCurrentUser({
-            name: user.displayName || 'User',
-            email: email,
-        });
-
-        // Redirect if user is on the wrong dashboard
-        const currentPathRole = pathname.split('/')[1];
-        const expectedPathRole = role === 'patient' ? 'dashboard' : role;
-        if (currentPathRole !== expectedPathRole && currentPathRole !== 'register' && currentPathRole !== '') {
-           router.push(`/${expectedPathRole}`);
-        }
-
       } else {
         router.push('/');
       }
-    });
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, handleAuthChange);
     return () => unsubscribe();
   }, [pathname, router]);
 
