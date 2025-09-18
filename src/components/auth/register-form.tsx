@@ -54,9 +54,11 @@ export default function RegisterForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      await createUserWithEmailAndPassword(auth, values.email, values.password);
-      // After successful registration, you might want to store the user's name
-      // in your database. For this example, we'll just redirect.
+      // In a real app, you would also call your backend here to create a user
+      // record in your database with a default role of 'patient'.
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      
+      // Redirect to patient dashboard by default after registration
       router.push('/dashboard');
     } catch (error: any) {
       let description = 'An unexpected error occurred. Please try again.';
@@ -77,8 +79,7 @@ export default function RegisterForm() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      // You can add custom logic here after a successful sign-in.
-      // For now, we'll just redirect to the dashboard.
+      // In a real app, handle user creation in your DB here.
       router.push('/dashboard');
     } catch (error: any) {
       console.error('Google Sign-In Error:', error.message);
@@ -137,7 +138,7 @@ export default function RegisterForm() {
                 )}
               />
             </div>
-            <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
+            <Button type="submit" className="w-full">
               Create Account
             </Button>
           </form>

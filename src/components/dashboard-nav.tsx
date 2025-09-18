@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import {
   SidebarHeader,
@@ -26,12 +26,16 @@ import {
   Sun,
   Bell,
   ClipboardCheck,
+  Video,
+  LineChart,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { users } from '@/lib/placeholder-data';
-import { type UserRole } from '@/lib/types';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { Button } from './ui/button';
+import { signOut, getAuth, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+
+type UserRole = 'admin' | 'doctor' | 'patient';
 
 const adminNav = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -55,6 +59,7 @@ const patientNav = [
   { href: '/dashboard/appointments', label: 'Appointments', icon: Calendar },
   { href: '/dashboard/prescriptions', label: 'Prescriptions', icon: FileText },
   { href: '/dashboard/reports', label: 'Reports', icon: Upload },
+  { href: '/dashboard/video-consultation', label: 'Video Call', icon: Video},
   { href: '/dashboard/notifications', label: 'Notifications', icon: Bell },
 ];
 
@@ -95,11 +100,10 @@ function ThemeToggle() {
 
 export function DashboardNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const [userRole, setUserRole] = useState<UserRole>('patient');
+  const [currentUser, setCurrentUser] = useState<{name: string, email: string} | null>(null);
   
-  // In a real app, this would come from an auth context
-  const currentUser = users.find(u => u.role === userRole) || users.find(u => u.role === 'patient');
-
   useEffect(() => {
     if (pathname.startsWith('/admin')) {
       setUserRole('admin');
@@ -109,6 +113,25 @@ export function DashboardNav() {
       setUserRole('patient');
     }
   }, [pathname]);
+
+   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUser({
+            name: user.displayName || 'User',
+            email: user.email || 'user@example.com'
+        })
+      } else {
+        router.push('/');
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push('/');
+  };
 
   const currentNav = navItems[userRole];
   const settingsPath = `/${userRole === 'patient' ? 'dashboard' : userRole}/settings`;
@@ -158,21 +181,18 @@ export function DashboardNav() {
                 </Link>
             </SidebarMenuItem>
             <SidebarMenuItem>
-                <Link href="/" passHref>
-                    <SidebarMenuButton asChild tooltip="Logout">
-                        <div>
-                            <LogOut/>
-                            <span className="group-data-[collapsible=icon]:hidden">Logout</span>
-                        </div>
-                    </SidebarMenuButton>
-                </Link>
+                <SidebarMenuButton onClick={handleLogout} asChild tooltip="Logout">
+                    <div>
+                        <LogOut/>
+                        <span className="group-data-[collapsible=icon]:hidden">Logout</span>
+                    </div>
+                </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
         <div className="p-2 mt-2 border-t group-data-[collapsible=icon]:hidden">
           <div className="flex items-center gap-3">
             <Avatar>
-              <AvatarImage src={currentUser?.avatarUrl} alt={currentUser?.name} data-ai-hint={currentUser?.dataAiHint} />
-              <AvatarFallback>{currentUser?.name.charAt(0)}</AvatarFallback>
+              <AvatarFallback>{currentUser?.name?.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col text-sm">
                 <span className="font-semibold">{currentUser?.name}</span>

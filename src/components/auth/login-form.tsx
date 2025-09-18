@@ -52,24 +52,16 @@ export default function LoginForm() {
   });
 
   const handleRoleBasedRedirect = async (user: User) => {
-    try {
-      const idTokenResult = await user.getIdTokenResult(true); // Force refresh
-      const role = idTokenResult.claims.role;
+    // This is a placeholder for role-based logic.
+    // In a real app, you'd fetch the user's role from your backend/Firestore
+    // after getting the ID token.
+    const email = user.email || '';
 
-      switch (role) {
-        case 'admin':
-          router.push('/admin');
-          break;
-        case 'doctor':
-          router.push('/doctor');
-          break;
-        case 'patient':
-        default:
-          router.push('/dashboard');
-          break;
-      }
-    } catch (error) {
-        console.error("Error getting user role, defaulting to patient dashboard:", error);
+    if (email.startsWith('admin')) {
+        router.push('/admin');
+    } else if (email.startsWith('doctor')) {
+        router.push('/doctor');
+    } else {
         router.push('/dashboard');
     }
   }
@@ -103,6 +95,8 @@ export default function LoginForm() {
     setIsLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
+      // In a real app, you'd want to check if this user exists in your DB
+      // and what their role is before redirecting.
       await handleRoleBasedRedirect(result.user);
     } catch (error: any) {
       console.error('Google Sign-In Error:', error.message);
@@ -157,7 +151,7 @@ export default function LoginForm() {
                 )}
               />
             </fieldset>
-            <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
             </Button>
