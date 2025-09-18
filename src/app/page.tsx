@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../lib/firebase'; // Assuming firebase config is in lib
+import { auth } from '@/lib/firebase'; // Assuming firebase config is in lib
 import dynamic from 'next/dynamic';
 
 import LoginComponent from '../components/Login';
