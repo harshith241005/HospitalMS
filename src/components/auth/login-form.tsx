@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import Link from 'next/link';
 import { 
-  getAuth, 
   signInWithEmailAndPassword, 
   GoogleAuthProvider, 
   signInWithPopup,
@@ -34,21 +33,16 @@ const formSchema = z.object({
   email: z.string().email({
     message: 'Please enter a valid email address.',
   }),
-  password: z.string().min(6, {
-    message: 'Password must be at least 6 characters.',
+  password: z.string().min(8, {
+    message: 'Password must be at least 8 characters.',
   }),
 });
 
-// Mock user object for demonstration purposes
-const mockUser = (email: string): User => ({
-  email: email,
-  displayName: email.split('@')[0],
-  uid: `mock-${email}`,
-  // Add other user properties if needed, ensuring they match the User type
-} as User);
+interface LoginFormProps {
+  userType: 'Patient' | 'Staff';
+}
 
-
-export default function LoginForm() {
+export default function LoginForm({ userType }: LoginFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -78,37 +72,37 @@ export default function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     const { email, password } = values;
-    const testEmails = ['admin@hospital.com', 'doctor@hospital.com', 'patient@hospital.com'];
     
-    // Check for test accounts with default password
-    if (testEmails.includes(email) && password === '12345678') {
+    // Test account logic
+    const testAccounts: { [email: string]: string } = {
+        'admin@hospital.com': '/admin',
+        'doctor@hospital.com': '/doctor',
+        'patient@hospital.com': '/dashboard'
+    };
+
+    if (testAccounts[email] && password === '12345678') {
       try {
-        // Simulate a successful sign-in by creating a mock user object
-        // and calling the redirect logic directly. We need to sign in anonymously
-        // to make sure the onAuthStateChanged listener is triggered correctly.
-        const userCredential = await signInWithEmailAndPassword(auth, 'test@test.com', '12345678');
-        
-        // We override the user object with our mock user.
-        // In a real scenario with a backend, you'd get a custom token and sign in with that.
-        const mockUserObject = { ...userCredential.user, email: email, displayName: email.split('@')[0] };
-
-        await handleRoleBasedRedirect(mockUserObject as User);
-
-      } catch (e) {
-          // This is a fallback to create the test user if it doesn't exist.
-          // This should only run once.
-        try {
-            await auth.createUserWithEmailAndPassword('test@test.com', '12345678');
-            const userCredential = await signInWithEmailAndPassword(auth, 'test@test.com', '12345678');
-            const mockUserObject = { ...userCredential.user, email: email, displayName: email.split('@')[0] };
-            await handleRoleBasedRedirect(mockUserObject as User);
-        } catch (finalError) {
-             toast({
-                variant: 'destructive',
-                title: 'Test Account Setup Failed',
-                description: "Could not create the necessary test account. Please check Firebase connection.",
-            });
+        // We need a signed-in user for the dashboard logic to work, but it doesn't have to be the *right* one
+        // for this mock scenario. We can sign in an anonymous or test user.
+        // A more robust mock would involve custom tokens.
+        if (auth.currentUser?.email !== 'test@test.com') {
+             await signInWithEmailAndPassword(auth, 'test@test.com', '12345678').catch(async () => {
+                await auth.createUserWithEmailAndPassword('test@test.com', '12345678');
+                await signInWithEmailAndPassword(auth, 'test@test.com', '12345678');
+             });
         }
+        
+        // Create a mock user object for redirection logic
+        const mockUser = { email: email } as User;
+        await handleRoleBasedRedirect(mockUser);
+
+      } catch (e: any) {
+        console.error("Test account login error:", e.message);
+        toast({
+            variant: 'destructive',
+            title: 'Test Account Login Failed',
+            description: "Could not sign in with the test account. Please check Firebase connectivity.",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -122,12 +116,9 @@ export default function LoginForm() {
 
     } catch (error: any) {
       let description = "Invalid credentials. Please check your email and password.";
-      if (error.code === 'auth/invalid-credential') {
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
         // No console log needed here as it's an expected user error.
-      } else if (error.code === 'auth/user-not-found') {
-          description = "No account found with this email. Please sign up.";
-      }
-      else {
+      } else {
         console.error('Authentication error:', error.message);
         description = "An unexpected error occurred. Please try again.";
       }
@@ -146,8 +137,6 @@ export default function LoginForm() {
     setIsLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
-      // In a real app, you'd want to check if this user exists in your DB
-      // and what their role is before redirecting.
       await handleRoleBasedRedirect(result.user);
     } catch (error: any) {
       console.error('Google Sign-In Error:', error.message);
@@ -187,7 +176,7 @@ export default function LoginForm() {
                   <FormItem>
                     <div className="flex items-center justify-between">
                       <FormLabel>Password</FormLabel>
-                      <Link
+                       <Link
                         href="/forgot-password"
                         className="text-sm font-medium text-primary hover:underline"
                       >
@@ -208,40 +197,55 @@ export default function LoginForm() {
             </Button>
           </form>
         </Form>
-        <div className="relative my-6">
-          <Separator />
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t"></span>
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">
-              Or continue with
-            </span>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-4">
-          <Button variant="outline" onClick={handleGoogleSignIn} disabled={isLoading}>
-             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            <svg role="img" viewBox="0 0 24 24" className="mr-2 h-4 w-4">
-              <path
-                fill="currentColor"
-                d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.02 1.02-2.6 1.98-4.66 1.98-3.56 0-6.47-2.91-6.47-6.47s2.91-6.47 6.47-6.47c1.94 0 3.32.73 4.31 1.69l2.43-2.43C16.71 3.29 14.75 2.5 12.48 2.5c-4.97 0-9 4.03-9 9s4.03 9 9 9c4.85 0 8.53-3.46 8.53-8.75v-.25h-8.53z"
-              ></path>
-            </svg>
-            Google
-          </Button>
-        </div>
+        {userType === 'Patient' && (
+          <>
+            <div className="relative my-6">
+              <Separator />
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t"></span>
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-4">
+              <Button variant="outline" onClick={handleGoogleSignIn} disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <svg role="img" viewBox="0 0 24 24" className="mr-2 h-4 w-4">
+                  <path
+                    fill="currentColor"
+                    d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.02 1.02-2.6 1.98-4.66 1.98-3.56 0-6.47-2.91-6.47-6.47s2.91-6.47 6.47-6.47c1.94 0 3.32.73 4.31 1.69l2.43-2.43C16.71 3.29 14.75 2.5 12.48 2.5c-4.97 0-9 4.03-9 9s4.03 9 9 9c4.85 0 8.53-3.46 8.53-8.75v-.25h-8.53z"
+                  ></path>
+                </svg>
+                Google
+              </Button>
+            </div>
+          </>
+        )}
       </CardContent>
       <CardFooter className="flex justify-center p-6 pt-0">
-        <p className="text-sm text-muted-foreground">
-          Don't have an account?{' '}
-          <Link
-            href="/register"
-            className="font-medium text-primary hover:underline"
-          >
-            Sign up
-          </Link>
-        </p>
+        {userType === 'Patient' ? (
+            <p className="text-sm text-muted-foreground">
+                Don't have an account?{' '}
+                <Link
+                    href="/register"
+                    className="font-medium text-primary hover:underline"
+                >
+                    Sign up
+                </Link>
+            </p>
+        ) : (
+            <p className="text-sm text-muted-foreground">
+                <Link
+                    href="/"
+                    className="font-medium text-primary hover:underline"
+                >
+                    Back to main login options
+                </Link>
+            </p>
+        )}
       </CardFooter>
     </Card>
   );
