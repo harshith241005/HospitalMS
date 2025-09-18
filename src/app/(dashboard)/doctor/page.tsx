@@ -10,16 +10,31 @@ export default function DoctorDashboardPage() {
     const loggedInDoctorId = 'doc-1';
     
     // Use state to make the component reactive to changes in the placeholder data
-    const [doctorAppointments, setDoctorAppointments] = useState(() => appointments.filter(a => a.doctor.id === loggedInDoctorId));
+    const [doctorStats, setDoctorStats] = useState({
+        todayAppointments: [],
+        pendingApprovals: 0,
+        totalPatients: 0
+    });
 
-    // This effect could be triggered by a global state change in a real app
     useEffect(() => {
-        setDoctorAppointments(appointments.filter(a => a.doctor.id === loggedInDoctorId));
-    }, [appointments]); // Dependency on the imported array itself
+        const updateStats = () => {
+            const doctorAppointments = appointments.filter(a => a.doctor.id === loggedInDoctorId);
+            const todayAppointments = doctorAppointments.filter(a => format(new Date(a.date), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && a.status === 'Scheduled');
+            const pendingApprovals = appointments.filter(a => a.doctor.id === loggedInDoctorId && a.status === 'Pending Approval').length;
+            const totalPatients = new Set(doctorAppointments.map(a => a.patient.id)).size;
 
-    const todayAppointments = doctorAppointments.filter(a => format(new Date(a.date), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') && a.status === 'Scheduled');
-    const pendingApprovals = doctorAppointments.filter(a => a.status === 'Pending Approval').length;
-    const totalPatients = new Set(doctorAppointments.map(a => a.patient.id)).size;
+            setDoctorStats({
+                todayAppointments,
+                pendingApprovals,
+                totalPatients
+            });
+        };
+
+        updateStats();
+        // Poll for changes in case another "user" updates the data
+        const interval = setInterval(updateStats, 2000);
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -32,8 +47,8 @@ export default function DoctorDashboardPage() {
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{todayAppointments.length}</div>
-                        <p className="text-xs text-muted-foreground">You have {todayAppointments.length} scheduled appointments today.</p>
+                        <div className="text-2xl font-bold">{doctorStats.todayAppointments.length}</div>
+                        <p className="text-xs text-muted-foreground">You have {doctorStats.todayAppointments.length} scheduled appointments today.</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -42,8 +57,8 @@ export default function DoctorDashboardPage() {
                         <Clock className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{pendingApprovals}</div>
-                        <p className="text-xs text-muted-foreground">{pendingApprovals} requests need your review.</p>
+                        <div className="text-2xl font-bold">{doctorStats.pendingApprovals}</div>
+                        <p className="text-xs text-muted-foreground">{doctorStats.pendingApprovals} requests need your review.</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -52,7 +67,7 @@ export default function DoctorDashboardPage() {
                         <User className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{totalPatients}</div>
+                        <div className="text-2xl font-bold">{doctorStats.totalPatients}</div>
                         <p className="text-xs text-muted-foreground">Total unique patients seen.</p>
                     </CardContent>
                 </Card>
@@ -62,9 +77,9 @@ export default function DoctorDashboardPage() {
                     <CardTitle>Today's Schedule</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {todayAppointments.length > 0 ? (
+                    {doctorStats.todayAppointments.length > 0 ? (
                         <ul className="space-y-4">
-                            {todayAppointments.sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map(appt => (
+                            {doctorStats.todayAppointments.sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map(appt => (
                                 <li key={appt.id} className="flex items-center justify-between p-3 rounded-lg bg-secondary">
                                     <div>
                                         <p className="font-semibold">{appt.patient.name}</p>

@@ -58,4 +58,3 @@ export default function PrescriptionCard({ prescription }: PrescriptionCardProps
         </Card>
     );
 }
-

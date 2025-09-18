@@ -19,7 +19,7 @@ export const appointments: Appointment[] = [
   { id: 'appt-3', patient: patients[0], doctor: doctors[1], date: new Date(new Date().setDate(new Date().getDate() - 10)), status: 'Completed', reason: 'Flu symptoms' },
   { id: 'appt-4', patient: patients[1], doctor: doctors[0], date: new Date(new Date().setDate(new Date().getDate() - 20)), status: 'Canceled', reason: 'Personal reasons' },
   { id: 'appt-5', patient: patients[0], doctor: doctors[0], date: new Date(new Date().setDate(new Date().getDate() + 5)), status: 'Pending Approval', reason: 'Chest pain' },
-  { id: 'appt-6', patient: {id: 'pat-3', name: 'Tim Murphy', email: 'tim.murphy@meditrack.pro', role: 'patient', avatarUrl: 'https://picsum.photos/seed/avatar8/200/200'}, doctor: doctors[1], date: new Date(new Date().setDate(new Date().getDate() + 1)), status: 'Pending Approval', reason: 'Initial consultation' },
+  { id: 'appt-6', patient: {id: 'pat-3', name: 'Tim Murphy', email: 'tim.murphy@meditrack.pro', role: 'patient', avatarUrl: 'https://picsum.photos/seed/avatar8/200/200', dataAiHint: 'patient man'}, doctor: doctors[1], date: new Date(new Date().setDate(new Date().getDate() + 1)), status: 'Pending Approval', reason: 'Initial consultation' },
 ];
 
 export const prescriptions: Prescription[] = [
