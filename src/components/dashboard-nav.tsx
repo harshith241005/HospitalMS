@@ -86,52 +86,78 @@ export function DashboardNav() {
   const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
   
   useEffect(() => {
-    const handleAuthChange = (firebaseUser: FirebaseUser | null) => {
-      if (firebaseUser) {
-        const email = firebaseUser.email || '';
-        let matchedUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    // This is a mock auth state checker for the demo.
+    // It checks for a 'logged_in_as' URL parameter or uses the onAuthStateChanged for actual Firebase users.
+    const urlParams = new URLSearchParams(window.location.search);
+    const mockUserEmail = urlParams.get('logged_in_as');
 
-        if (email.startsWith('admin@')) matchedUser = users.find(u => u.role === 'admin');
-        else if (email.startsWith('doctor@')) matchedUser = users.find(u => u.role === 'doctor');
-        else if (email.startsWith('patient@')) matchedUser = users.find(u => u.role === 'patient');
+    const handleAuth = (user: FirebaseUser | { email: string | null }) => {
+      const email = user.email || '';
+      let matchedUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
 
-        if (matchedUser) {
-          setCurrentUser(matchedUser);
-          setUserRole(matchedUser.role);
-          const expectedPathRole = matchedUser.role === 'patient' ? 'dashboard' : matchedUser.role;
-          const currentPathRole = pathname.split('/')[1];
+      if (email.startsWith('admin@')) matchedUser = users.find(u => u.role === 'admin');
+      else if (email.startsWith('doctor@')) matchedUser = users.find(u => u.role === 'doctor');
+      else if (email.startsWith('patient@')) matchedUser = users.find(u => u.role === 'patient');
 
-          if (currentPathRole !== expectedPathRole && !['login', 'register', ''].includes(currentPathRole)) {
-             router.push(`/${expectedPathRole}`);
-          }
-        } else {
-           // Default to patient for new registrations
-           const newUser: AppUser = {
-             id: firebaseUser.uid,
-             name: firebaseUser.displayName || 'New User',
-             email: email,
-             role: 'patient',
-             avatarUrl: firebaseUser.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/200/200`,
-             dataAiHint: 'person'
-           };
-           setCurrentUser(newUser);
-           setUserRole('patient');
-           if(pathname.split('/')[1] !== 'dashboard') {
-             router.push('/dashboard');
-           }
+      if (matchedUser) {
+        setCurrentUser(matchedUser);
+        setUserRole(matchedUser.role);
+        const expectedPathRole = matchedUser.role === 'patient' ? 'dashboard' : matchedUser.role;
+        const currentPathRole = pathname.split('/')[1];
+
+        if (currentPathRole !== expectedPathRole && !['login', 'register', ''].includes(currentPathRole)) {
+           router.push(`/${expectedPathRole}`);
         }
       } else {
-        router.push('/');
+         // Default to patient for new registrations
+         const newUser: AppUser = {
+           id: 'firebaseUser' in user ? (user as FirebaseUser).uid : 'new-user',
+           name: 'firebaseUser' in user ? (user as FirebaseUser).displayName || 'New User' : 'New User',
+           email: email,
+           role: 'patient',
+           avatarUrl: 'firebaseUser' in user ? (user as FirebaseUser).photoURL || `https://picsum.photos/seed/${(user as FirebaseUser).uid}/200/200` : `https://picsum.photos/seed/new-user/200/200`,
+           dataAiHint: 'person'
+         };
+         setCurrentUser(newUser);
+         setUserRole('patient');
+         if(pathname.split('/')[1] !== 'dashboard') {
+           router.push('/dashboard');
+         }
       }
     };
 
-    const unsubscribe = onAuthStateChanged(auth, handleAuthChange);
-    return () => unsubscribe();
+    if (mockUserEmail) {
+      // Handle mock login
+      handleAuth({ email: mockUserEmail });
+      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        if (!firebaseUser) {
+          router.push('/');
+        }
+      });
+      return () => unsubscribe();
+    } else {
+      // Handle real Firebase auth
+      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        if (firebaseUser) {
+          handleAuth(firebaseUser);
+        } else {
+          router.push('/');
+        }
+      });
+      return () => unsubscribe();
+    }
+
   }, [pathname, router]);
 
   const handleLogout = async () => {
-    await signOut(auth);
-    router.push('/');
+    // For demo purposes, we just redirect to the main page.
+    // A real logout would also sign out from Firebase.
+    if (window.location.search.includes('logged_in_as')) {
+       router.push('/');
+    } else {
+      await signOut(auth);
+      router.push('/');
+    }
   };
 
   const currentNav = navItems[userRole];

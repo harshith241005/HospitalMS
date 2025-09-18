@@ -71,6 +71,7 @@ export default function LoginForm({ userType }: LoginFormProps) {
                 title: 'Access Denied',
                 description: "This email is not registered as staff.",
             });
+             setIsLoading(false);
         }
     } else {
         router.push('/dashboard');
@@ -89,22 +90,8 @@ export default function LoginForm({ userType }: LoginFormProps) {
     };
 
     if (testAccounts[email] && password === 'password123') {
-      try {
-        // Use a pre-created test user in Firebase to create a valid session
-        const userCredential = await signInWithEmailAndPassword(auth, 'test@test.com', 'password123');
-        // Now use the email from the form to perform the correct redirect
-        await handleRoleBasedRedirect({ email } as User);
-
-      } catch (e: any) {
-        console.error("Test account login error:", e.message);
-        toast({
-            variant: 'destructive',
-            title: 'Test Account Login Failed',
-            description: "Could not sign in with the test account. Please check Firebase connectivity and ensure 'test@test.com' user exists with password 'password123'.",
-        });
-      } finally {
-        setIsLoading(false);
-      }
+      // Simulate a successful login for demo accounts without calling Firebase
+      await handleRoleBasedRedirect({ email } as User);
       return;
     }
 
