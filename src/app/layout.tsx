@@ -1,33 +1,19 @@
-import type { Metadata } from 'next';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
-import { cn } from '@/lib/utils';
-import { ThemeProvider } from '@/components/theme-provider';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'MediTrack Pro',
-  description: 'A modern Hospital Management System',
+  title: 'Hospital Management System',
+  description: 'A role-based hospital management system.',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head />
-      <body className={cn('font-body antialiased')}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
-      </body>
+    <html lang="en">
+      <body>{children}</body>
     </html>
   );
 }

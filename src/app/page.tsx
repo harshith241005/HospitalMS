@@ -1,23 +1,58 @@
-import LoginForm from '@/components/auth/login-form';
-import { Stethoscope } from 'lucide-react';
+'use client';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../lib/firebase'; // Assuming firebase config is in lib
 
-export default function LoginPage() {
+import LoginComponent from '../components/Login';
+import AdminDashboard from '../components/AdminDashboard';
+import DoctorDashboard from '../components/DoctorDashboard';
+import PatientDashboard from '../components/PatientDashboard';
+
+// A wrapper to handle initial auth state and redirection
+const AppWrapper = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // In a real app, you'd fetch the user's role from Firestore/backend
+        // For this prototype, we'll use email-based routing
+        if (user.email?.includes('admin')) {
+          navigate('/admin');
+        } else if (user.email?.includes('doctor')) {
+          navigate('/doctor');
+        } else {
+          navigate('/patient');
+        }
+      } else {
+        // If not logged in, ensure they are on the login page
+        navigate('/');
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md">
-        <div className="mb-8 flex flex-col items-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
-            <Stethoscope className="h-8 w-8" />
-          </div>
-          <h1 className="text-3xl font-bold text-center font-headline tracking-tight text-gray-900 dark:text-gray-50">
-            MediTrack Pro
-          </h1>
-          <p className="mt-2 text-center text-sm text-muted-foreground">
-            Welcome! Please sign in to your account.
-          </p>
-        </div>
-        <LoginForm />
-      </div>
-    </main>
+      <Routes>
+        <Route path="/" element={<LoginComponent />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/doctor" element={<DoctorDashboard />} />
+        <Route path="/patient" element={<PatientDashboard />} />
+        {/* Redirect any other path to login */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
   );
+};
+
+
+const App = () => {
+    return (
+        <Router>
+            <AppWrapper />
+        </Router>
+    )
 }
+
+export default App;
