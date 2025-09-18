@@ -28,6 +28,8 @@ const AppWrapper = () => {
         }
       } else {
         // If not logged in, ensure they are on the login page
+        // With the mock login, this part might not be hit for test users,
+        // as the login component now handles navigation directly.
         if (window.location.pathname !== '/') {
             navigate('/');
         }

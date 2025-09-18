@@ -4,6 +4,15 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { useNavigate } from 'react-router-dom';
 
+// Mock user object for demonstration purposes
+const mockUser = (email) => ({
+  user: {
+    email: email,
+    // Add other user properties if needed by other parts of the app
+  }
+});
+
+
 export default function LoginComponent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,6 +22,20 @@ export default function LoginComponent() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    
+    // Mock authentication for test accounts
+    const testEmails = ['admin@hospital.com', 'doctor@hospital.com', 'patient@hospital.com'];
+    if (testEmails.includes(email)) {
+      console.log(`Mock login successful for ${email}`);
+      // The onAuthStateChanged in App.js will handle redirection.
+      // For this mock login, we can manually trigger a similar logic.
+      if (email.includes('admin')) navigate('/admin');
+      else if (email.includes('doctor')) navigate('/doctor');
+      else navigate('/patient');
+      return;
+    }
+
+    // Actual Firebase authentication for other accounts
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       // The onAuthStateChanged in App.js will handle redirection
