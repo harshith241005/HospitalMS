@@ -55,7 +55,7 @@ const doctorNav = [
 
 const patientNav = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/dashboard/appointments', label: 'Book Appointment', icon: Calendar },
+  { href: '/dashboard/appointments', label: 'My Appointments', icon: Calendar },
   { href: '/dashboard/reports', label: 'Reports', icon: FileText },
   { href: '/dashboard/billing', label: 'Billing & Payments', icon: Wallet },
 ];

@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { MoreHorizontal, PlusCircle, Calendar } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { appointments, doctors } from "@/lib/placeholder-data";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar as CalendarPicker } from '@/components/ui/calendar';
+import { Calendar } from '@/components/ui/calendar';
 
 const statusColors: Record<AppointmentStatus, string> = {
     Scheduled: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
@@ -50,6 +50,8 @@ export default function AppointmentsPage() {
 
     const onSubmit = (values: z.infer<typeof appointmentSchema>) => {
         console.log("New Appointment Request:", values);
+        // Here you would typically call an API to save the appointment.
+        // For now, we just show a toast notification.
         toast({
             title: "Appointment Requested",
             description: `Your request has been sent and is pending approval.`,
@@ -112,12 +114,12 @@ export default function AppointmentsPage() {
                                                             )}
                                                             >
                                                             {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                                                            <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                                         </Button>
                                                     </FormControl>
                                                 </PopoverTrigger>
                                                 <PopoverContent className="w-auto p-0" align="start">
-                                                    <CalendarPicker
+                                                    <Calendar
                                                         mode="single"
                                                         selected={field.value}
                                                         onSelect={field.onChange}
@@ -160,22 +162,24 @@ export default function AppointmentsPage() {
                                 <TableHead>Doctor</TableHead>
                                 <TableHead>Date</TableHead>
                                 <TableHead>Status</TableHead>
+                                <TableHead>Reason</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {upcomingAppointments.length > 0 ? upcomingAppointments.map((appointment: Appointment) => (
                                 <TableRow key={appointment.id}>
-                                    <TableCell className="font-medium">{appointment.doctor.name}</TableCell>
+                                    <TableCell className="font-medium">Dr. {appointment.doctor.name}</TableCell>
                                     <TableCell>{format(appointment.date, "MMMM d, yyyy 'at' h:mm a")}</TableCell>
                                     <TableCell>
                                         <Badge className={cn("border-transparent", statusColors[appointment.status])}>
                                             {appointment.status}
                                         </Badge>
                                     </TableCell>
+                                    <TableCell>{appointment.reason}</TableCell>
                                 </TableRow>
                             )) : (
                                 <TableRow>
-                                    <TableCell colSpan={3} className="text-center h-24">No upcoming appointments.</TableCell>
+                                    <TableCell colSpan={4} className="text-center h-24">No upcoming appointments.</TableCell>
                                 </TableRow>
                             )}
                         </TableBody>
@@ -199,7 +203,7 @@ export default function AppointmentsPage() {
                         <TableBody>
                             {pastAppointments.length > 0 ? pastAppointments.map((appointment: Appointment) => (
                                 <TableRow key={appointment.id}>
-                                    <TableCell className="font-medium">{appointment.doctor.name}</TableCell>
+                                    <TableCell className="font-medium">Dr. {appointment.doctor.name}</TableCell>
                                     <TableCell>{format(appointment.date, "MMMM d, yyyy")}</TableCell>
                                     <TableCell>
                                         <Badge className={cn("border-transparent", statusColors[appointment.status])}>
@@ -219,4 +223,3 @@ export default function AppointmentsPage() {
         </div>
     );
 }
-
