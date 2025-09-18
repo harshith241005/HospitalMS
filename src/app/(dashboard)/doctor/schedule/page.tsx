@@ -1,18 +1,26 @@
 
+'use client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { appointments } from "@/lib/placeholder-data";
 import { format } from "date-fns";
+import { useState, useEffect } from 'react';
 
 export default function SchedulePage() {
-    const scheduledDates = appointments
-        .filter(a => a.status === 'Scheduled')
-        .map(a => a.date);
+    const loggedInDoctorId = 'doc-1'; 
 
-    const upcomingAppointments = appointments
-        .filter(a => a.status === 'Scheduled' && a.date >= new Date())
-        .sort((a, b) => a.date.getTime() - b.date.getTime())
-        .slice(0, 5);
+    const [scheduledDates, setScheduledDates] = useState<Date[]>([]);
+    const [upcomingAppointments, setUpcomingAppointments] = useState(appointments
+        .filter(a => a.doctor.id === loggedInDoctorId && a.status === 'Scheduled' && new Date(a.date) >= new Date())
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .slice(0, 5));
+
+    useEffect(() => {
+        const dates = appointments
+            .filter(a => a.doctor.id === loggedInDoctorId && a.status === 'Scheduled')
+            .map(a => new Date(a.date));
+        setScheduledDates(dates);
+    }, []);
     
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -45,8 +53,8 @@ export default function SchedulePage() {
                                             <p className="text-sm text-muted-foreground">{appt.reason}</p>
                                         </div>
                                         <div className="text-right flex-shrink-0 ml-4">
-                                            <p className="text-sm font-medium">{format(appt.date, "EEE, MMM d")}</p>
-                                            <p className="text-xs text-muted-foreground">{format(appt.date, "h:mm a")}</p>
+                                            <p className="text-sm font-medium">{format(new Date(appt.date), "EEE, MMM d")}</p>
+                                            <p className="text-xs text-muted-foreground">{format(new Date(appt.date), "h:mm a")}</p>
                                         </div>
                                     </li>
                                 ))}

@@ -34,7 +34,7 @@ export interface Appointment {
   id: string;
   patient: Patient | User;
   doctor: Doctor;
-  date: Date;
+  date: Date | string;
   status: AppointmentStatus;
   reason: string;
 }
@@ -44,7 +44,7 @@ export interface Prescription {
   appointmentId: string;
   doctor: Doctor;
   patient: Patient;
-  date: Date;
+  date: Date | string;
   medications: Medication[];
   notes: string;
   fullText: string;
@@ -60,7 +60,7 @@ export interface Report {
   id: string;
   patientId: string;
   name: string;
-  uploadDate: Date;
+  uploadDate: Date | string;
   url: string;
 }
 
@@ -69,6 +69,6 @@ export interface Notification {
     userId: string;
     title: string;
     message: string;
-    date: Date;
+    date: Date | string;
     read: boolean;
 }

@@ -13,9 +13,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { prescriptions, patients } from '@/lib/placeholder-data';
+import { prescriptions as placeholderPrescriptions, patients, doctors } from '@/lib/placeholder-data';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
+import type { Prescription } from '@/lib/types';
 
 const prescriptionSchema = z.object({
     patientId: z.string().min(1, "Please select a patient."),
@@ -25,9 +26,15 @@ const prescriptionSchema = z.object({
     notes: z.string().optional(),
 });
 
+// This is a mock function to simulate getting the current user.
+const getCurrentDoctor = () => doctors.find(d => d.id === 'doc-1')!;
+
 export default function DoctorPrescriptionsPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [prescriptions, setPrescriptions] = useState(placeholderPrescriptions);
     const { toast } = useToast();
+    const currentDoctor = getCurrentDoctor();
+    
     const form = useForm<z.infer<typeof prescriptionSchema>>({
         resolver: zodResolver(prescriptionSchema),
         defaultValues: {
@@ -40,14 +47,38 @@ export default function DoctorPrescriptionsPage() {
     });
 
     const onSubmit = (values: z.infer<typeof prescriptionSchema>) => {
-        console.log("New Prescription:", values);
+        const selectedPatient = patients.find(p => p.id === values.patientId)!;
+        
+        const newPrescription: Prescription = {
+            id: `pres-${Date.now()}`,
+            appointmentId: `appt-${Date.now()}`, // Mock appointment ID
+            doctor: currentDoctor,
+            patient: selectedPatient,
+            date: new Date(),
+            medications: [{
+                name: values.medicationName,
+                dosage: values.dosage,
+                frequency: values.frequency
+            }],
+            notes: values.notes || '',
+            fullText: `Patient: ${selectedPatient.name}. Medication: ${values.medicationName} ${values.dosage}, ${values.frequency}. Notes: ${values.notes}`
+        };
+
+        // Add to the "database"
+        placeholderPrescriptions.push(newPrescription);
+
+        // Update local state to trigger re-render
+        setPrescriptions([...placeholderPrescriptions]);
+        
         toast({
             title: "Prescription Created",
-            description: `A new prescription for ${values.medicationName} has been created.`,
+            description: `A new prescription for ${values.medicationName} has been created for ${selectedPatient.name}.`,
         });
         setIsDialogOpen(false);
         form.reset();
     };
+
+    const doctorPrescriptions = prescriptions.filter(p => p.doctor.id === currentDoctor.id);
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -158,14 +189,14 @@ export default function DoctorPrescriptionsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {prescriptions.map(p => (
+                            {doctorPrescriptions.map(p => (
                                 <TableRow key={p.id}>
                                     <TableCell>{p.patient.name}</TableCell>
                                     <TableCell>{p.medications.map(m => m.name).join(', ')}</TableCell>
-                                    <TableCell>{format(p.date, "MMMM d, yyyy")}</TableCell>
+                                    <TableCell>{format(new Date(p.date), "MMMM d, yyyy")}</TableCell>
                                 </TableRow>
                             ))}
-                             {prescriptions.length === 0 && (
+                             {doctorPrescriptions.length === 0 && (
                                 <TableRow>
                                     <TableCell colSpan={3} className="h-24 text-center">
                                         <FileText className="mx-auto h-12 w-12 text-muted-foreground" />

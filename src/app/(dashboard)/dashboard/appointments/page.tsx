@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import type { Appointment, AppointmentStatus } from "@/lib/types";
+import type { Appointment, AppointmentStatus, Patient, Doctor } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { MoreHorizontal, PlusCircle, Calendar as CalendarIcon } from "lucide-react";
+import { PlusCircle, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import { appointments, doctors } from "@/lib/placeholder-data";
+import { appointments as placeholderAppointments, doctors, users } from "@/lib/placeholder-data";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -34,12 +34,20 @@ const appointmentSchema = z.object({
     reason: z.string().min(1, "Please provide a reason for your visit."),
 });
 
+// This is a mock function to simulate getting the current user.
+// In a real app, this would come from an auth context.
+const getCurrentPatient = (): Patient => {
+    return users.find(u => u.email === 'patient@hospital.com') as Patient;
+}
+
+
 export default function AppointmentsPage() {
-    const patientAppointments = appointments; // Placeholder
-    const upcomingAppointments = patientAppointments.filter(a => new Date(a.date) >= new Date() && a.status !== 'Canceled');
-    const pastAppointments = patientAppointments.filter(a => new Date(a.date) < new Date() || a.status === 'Canceled');
+    // In a real app, you would fetch and update appointments from a backend.
+    // For this simulation, we just modify the placeholder data in memory.
+    const [patientAppointments, setPatientAppointments] = useState(placeholderAppointments);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { toast } = useToast();
+    const currentPatient = getCurrentPatient();
 
     const form = useForm<z.infer<typeof appointmentSchema>>({
         resolver: zodResolver(appointmentSchema),
@@ -49,16 +57,34 @@ export default function AppointmentsPage() {
     });
 
     const onSubmit = (values: z.infer<typeof appointmentSchema>) => {
-        console.log("New Appointment Request:", values);
-        // Here you would typically call an API to save the appointment.
-        // For now, we just show a toast notification.
+        const selectedDoctor = doctors.find(d => d.id === values.doctorId) as Doctor;
+        
+        const newAppointment: Appointment = {
+            id: `appt-${Date.now()}`,
+            patient: currentPatient,
+            doctor: selectedDoctor,
+            date: values.date,
+            status: 'Pending Approval',
+            reason: values.reason,
+        };
+
+        // Add to the "database"
+        placeholderAppointments.push(newAppointment);
+
+        // Update the local state to trigger a re-render
+        setPatientAppointments([...placeholderAppointments]);
+        
         toast({
             title: "Appointment Requested",
-            description: `Your request has been sent and is pending approval.`,
+            description: `Your request has been sent to Dr. ${selectedDoctor.name} and is pending approval.`,
         });
         setIsDialogOpen(false);
         form.reset();
     };
+    
+    const currentUserAppointments = patientAppointments.filter(a => a.patient.id === currentPatient.id);
+    const upcomingAppointments = currentUserAppointments.filter(a => new Date(a.date) >= new Date() && a.status !== 'Canceled');
+    const pastAppointments = currentUserAppointments.filter(a => new Date(a.date) < new Date() || a.status === 'Canceled');
 
 
     return (
@@ -169,7 +195,7 @@ export default function AppointmentsPage() {
                             {upcomingAppointments.length > 0 ? upcomingAppointments.map((appointment: Appointment) => (
                                 <TableRow key={appointment.id}>
                                     <TableCell className="font-medium">Dr. {appointment.doctor.name}</TableCell>
-                                    <TableCell>{format(appointment.date, "MMMM d, yyyy 'at' h:mm a")}</TableCell>
+                                    <TableCell>{format(new Date(appointment.date), "MMMM d, yyyy 'at' h:mm a")}</TableCell>
                                     <TableCell>
                                         <Badge className={cn("border-transparent", statusColors[appointment.status])}>
                                             {appointment.status}
@@ -204,7 +230,7 @@ export default function AppointmentsPage() {
                             {pastAppointments.length > 0 ? pastAppointments.map((appointment: Appointment) => (
                                 <TableRow key={appointment.id}>
                                     <TableCell className="font-medium">Dr. {appointment.doctor.name}</TableCell>
-                                    <TableCell>{format(appointment.date, "MMMM d, yyyy")}</TableCell>
+                                    <TableCell>{format(new Date(appointment.date), "MMMM d, yyyy")}</TableCell>
                                     <TableCell>
                                         <Badge className={cn("border-transparent", statusColors[appointment.status])}>
                                             {appointment.status}

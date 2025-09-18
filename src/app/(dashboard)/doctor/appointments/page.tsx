@@ -8,23 +8,26 @@ import type { Appointment } from "@/lib/types";
 import { Check, X } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function DoctorAppointmentsPage() {
     const { toast } = useToast();
     // In a real app, you'd get the logged-in doctor's ID
     const loggedInDoctorId = 'doc-1'; 
-    const [pendingAppointments, setPendingAppointments] = useState<Appointment[]>(
-        appointments.filter(a => a.doctor.id === loggedInDoctorId && a.status === 'Pending Approval')
-    );
+    const [pendingAppointments, setPendingAppointments] = useState<Appointment[]>([]);
+
+    useEffect(() => {
+        setPendingAppointments(appointments.filter(a => a.doctor.id === loggedInDoctorId && a.status === 'Pending Approval'));
+    }, []);
 
     const handleAppointmentAction = (appointmentId: string, action: 'approve' | 'reject') => {
-        const appointment = appointments.find(a => a.id === appointmentId);
-        if (appointment) {
+        const appointmentIndex = appointments.findIndex(a => a.id === appointmentId);
+        if (appointmentIndex > -1) {
+            const appointment = appointments[appointmentIndex];
             if (action === 'approve') {
-                appointment.status = 'Scheduled';
+                appointments[appointmentIndex].status = 'Scheduled';
             } else {
-                appointment.status = 'Canceled';
+                appointments[appointmentIndex].status = 'Canceled';
             }
             setPendingAppointments(prev => prev.filter(a => a.id !== appointmentId));
             toast({
@@ -57,8 +60,8 @@ export default function DoctorAppointmentsPage() {
                             {pendingAppointments.length > 0 ? pendingAppointments.map((appointment: Appointment) => (
                                 <TableRow key={appointment.id}>
                                     <TableCell className="font-medium">{appointment.patient.name}</TableCell>
-                                    <TableCell>{format(appointment.date, "MMMM d, yyyy")}</TableCell>
-                                    <TableCell>{format(appointment.date, "h:mm a")}</TableCell>
+                                    <TableCell>{format(new Date(appointment.date), "MMMM d, yyyy")}</TableCell>
+                                    <TableCell>{format(new Date(appointment.date), "h:mm a")}</TableCell>
                                     <TableCell>{appointment.reason}</TableCell>
                                     <TableCell className="text-right">
                                         <Button variant="outline" size="sm" className="mr-2 border-green-500 text-green-500 hover:bg-green-50 hover:text-green-600" onClick={() => handleAppointmentAction(appointment.id, 'approve')}>
@@ -83,4 +86,3 @@ export default function DoctorAppointmentsPage() {
         </div>
     );
 }
-

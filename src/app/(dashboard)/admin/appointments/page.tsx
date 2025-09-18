@@ -1,11 +1,12 @@
 
+'use client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { appointments } from "@/lib/placeholder-data";
+import { appointments as allAppointments } from "@/lib/placeholder-data";
 
 const statusColors: Record<AppointmentStatus, string> = {
     Scheduled: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
@@ -16,7 +17,6 @@ const statusColors: Record<AppointmentStatus, string> = {
 
 
 export default function AllAppointmentsPage() {
-    const allAppointments = appointments;
 
     return (
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -43,8 +43,8 @@ export default function AllAppointmentsPage() {
                                 <TableRow key={appointment.id}>
                                     <TableCell className="font-medium">{appointment.patient.name}</TableCell>
                                     <TableCell>Dr. {appointment.doctor.name}</TableCell>
-                                    <TableCell>{format(appointment.date, "MMMM d, yyyy")}</TableCell>
-                                    <TableCell>{format(appointment.date, "h:mm a")}</TableCell>
+                                    <TableCell>{format(new Date(appointment.date), "MMMM d, yyyy")}</TableCell>
+                                    <TableCell>{format(new Date(appointment.date), "h:mm a")}</TableCell>
                                     <TableCell>
                                         <Badge className={cn("border-transparent", statusColors[appointment.status])}>
                                             {appointment.status}

@@ -10,12 +10,12 @@ export default function AdminDashboardPage() {
     const upcomingAppointments = appointments.filter(a => a.status === 'Scheduled').length;
     
     const chartData = [
-        { name: 'Jan', appointments: 45 },
-        { name: 'Feb', appointments: 62 },
-        { name: 'Mar', appointments: 78 },
-        { name: 'Apr', appointments: 55 },
-        { name: 'May', appointments: 89 },
-        { name: 'Jun', appointments: 102 },
+        { name: 'Jan', appointments: appointments.filter(a => new Date(a.date).getMonth() === 0).length },
+        { name: 'Feb', appointments: appointments.filter(a => new Date(a.date).getMonth() === 1).length },
+        { name: 'Mar', appointments: appointments.filter(a => new Date(a.date).getMonth() === 2).length },
+        { name: 'Apr', appointments: appointments.filter(a => new Date(a.date).getMonth() === 3).length },
+        { name: 'May', appointments: appointments.filter(a => new Date(a.date).getMonth() === 4).length },
+        { name: 'Jun', appointments: appointments.filter(a => new Date(a.date).getMonth() === 5).length },
     ];
 
     return (
