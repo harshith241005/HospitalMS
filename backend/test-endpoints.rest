@@ -1,0 +1,137 @@
+### Test Authentication Endpoints
+
+### Register a new patient
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test Patient",
+  "email": "patient@hospital.com",
+  "password": "12345678",
+  "role": "patient",
+  "age": 30
+}
+
+### Register a new doctor
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Dr. Smith",
+  "email": "doctor@hospital.com",
+  "password": "12345678",
+  "role": "doctor",
+  "specialization": "Cardiology",
+  "availability": "Mon-Fri, 9AM-5PM"
+}
+
+### Login as patient
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "patient@hospital.com",
+  "password": "12345678"
+}
+
+### Login as doctor
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "doctor@hospital.com",
+  "password": "12345678"
+}
+
+### Login as admin
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@hospital.com",
+  "password": "12345678"
+}
+
+### Patient Endpoints (Use token from patient login)
+
+### Book an appointment
+POST http://localhost:5000/api/patient/appointments
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "doctorId": "DOCTOR_ID",
+  "date": "2025-09-20",
+  "time": "10:00 AM",
+  "reason": "Regular checkup"
+}
+
+### View my appointments
+GET http://localhost:5000/api/patient/appointments
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### View my reports
+GET http://localhost:5000/api/patient/reports
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Doctor Endpoints (Use token from doctor login)
+
+### View my appointments
+GET http://localhost:5000/api/doctor/appointments
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Update appointment status
+PUT http://localhost:5000/api/doctor/appointments/APPOINTMENT_ID
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "status": "CONFIRMED"
+}
+
+### Create prescription
+POST http://localhost:5000/api/doctor/prescriptions
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "patientId": "PATIENT_ID",
+  "appointmentId": "APPOINTMENT_ID",
+  "medicines": [
+    {
+      "name": "Paracetamol",
+      "dosage": "500mg",
+      "frequency": "Twice daily",
+      "duration": "5 days"
+    }
+  ],
+  "diagnosis": "Fever",
+  "notes": "Take with food"
+}
+
+### Admin Endpoints (Use token from admin login)
+
+### Get all doctors
+GET http://localhost:5000/api/admin/doctors
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Add new doctor
+POST http://localhost:5000/api/admin/doctors
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "name": "Dr. Jane Doe",
+  "email": "jane@hospital.com",
+  "password": "12345678",
+  "specialization": "Pediatrics",
+  "availability": "Mon-Fri, 10AM-6PM"
+}
+
+### Get all patients
+GET http://localhost:5000/api/admin/patients
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get all appointments
+GET http://localhost:5000/api/admin/appointments
+Authorization: Bearer YOUR_TOKEN_HERE
