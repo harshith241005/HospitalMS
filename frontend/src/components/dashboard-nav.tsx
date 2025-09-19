@@ -30,8 +30,7 @@ import {
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
-import { signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { onAuthStateChange, signOutUser, getCurrentUser, AuthUser } from '@/lib/auth';
 import { users } from '@/lib/placeholder-data';
 import type { User as AppUser } from '@/lib/types';
 
@@ -86,16 +85,16 @@ export function DashboardNav() {
   const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
   
   useEffect(() => {
-    // This is a mock auth state checker for the demo.
-    // It checks for a 'logged_in_as' URL parameter or uses the onAuthStateChanged for actual Firebase users.
+    // Check for demo accounts first
     const urlParams = new URLSearchParams(window.location.search);
     const mockUserEmail = urlParams.get('logged_in_as');
-
-    const handleAuth = (user: FirebaseUser | { email: string | null }) => {
-      const email = user.email || '';
+    
+    if (mockUserEmail) {
+      // Handle demo login
+      const email = mockUserEmail;
       let matchedUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
 
-      if (email.startsWith('admin@')) matchedUser = users.find(u => u.role === 'admin');
+      if (email === 'harshithboyina@gmail.com' || email.startsWith('admin@')) matchedUser = users.find(u => u.role === 'admin');
       else if (email.startsWith('doctor@')) matchedUser = users.find(u => u.role === 'doctor');
       else if (email.startsWith('patient@')) matchedUser = users.find(u => u.role === 'patient');
 
@@ -108,54 +107,60 @@ export function DashboardNav() {
         if (currentPathRole !== expectedPathRole && !['login', 'register', ''].includes(currentPathRole)) {
            router.push(`/${expectedPathRole}`);
         }
-      } else {
-         // Default to patient for new registrations
-         const newUser: AppUser = {
-           id: 'firebaseUser' in user ? (user as FirebaseUser).uid : 'new-user',
-           name: 'firebaseUser' in user ? (user as FirebaseUser).displayName || 'New User' : 'New User',
-           email: email,
-           role: 'patient',
-           avatarUrl: 'firebaseUser' in user ? (user as FirebaseUser).photoURL || `https://picsum.photos/seed/${(user as FirebaseUser).uid}/200/200` : `https://picsum.photos/seed/new-user/200/200`,
-           dataAiHint: 'person'
-         };
-         setCurrentUser(newUser);
-         setUserRole('patient');
-         if(pathname.split('/')[1] !== 'dashboard') {
-           router.push('/dashboard');
-         }
       }
-    };
-
-    if (mockUserEmail) {
-      // Handle mock login
-      handleAuth({ email: mockUserEmail });
-      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-        if (!firebaseUser) {
-          router.push('/');
-        }
-      });
-      return () => unsubscribe();
-    } else {
-      // Handle real Firebase auth
-      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-        if (firebaseUser) {
-          handleAuth(firebaseUser);
-        } else {
-          router.push('/');
-        }
-      });
-      return () => unsubscribe();
+      return;
     }
 
+    // Use Firebase auth state listener
+    const unsubscribe = onAuthStateChange((authUser: AuthUser | null) => {
+      if (authUser) {
+        const appUser: AppUser = {
+          id: authUser.id,
+          name: authUser.name,
+          email: authUser.email,
+          role: authUser.role,
+          avatarUrl: `https://picsum.photos/seed/${encodeURIComponent(authUser.email)}/200/200`,
+          dataAiHint: 'person'
+        };
+        
+        setCurrentUser(appUser);
+        setUserRole(authUser.role);
+
+        const expectedPathRole = authUser.role === 'patient' ? 'dashboard' : authUser.role;
+        const currentPathRole = pathname.split('/')[1];
+
+        if (currentPathRole !== expectedPathRole && !['login', 'register', ''].includes(currentPathRole)) {
+          router.push(`/${expectedPathRole}`);
+        }
+      } else {
+        // No authenticated user, redirect to home
+        const currentPathRole = pathname.split('/')[1];
+        if (!['login', 'register', ''].includes(currentPathRole)) {
+          router.push('/');
+        }
+      }
+    });
+
+    return () => unsubscribe();
   }, [pathname, router]);
 
   const handleLogout = async () => {
-    // For demo purposes, we just redirect to the main page.
-    // A real logout would also sign out from Firebase.
-    if (window.location.search.includes('logged_in_as')) {
-       router.push('/');
-    } else {
-      await signOut(auth);
+    try {
+      // Check if it's a demo login
+      if (window.location.search.includes('logged_in_as')) {
+        router.push('/');
+        return;
+      }
+      
+      // Use Firebase sign out
+      await signOutUser();
+      router.push('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Clear local storage as fallback
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('firebaseUid');
       router.push('/');
     }
   };

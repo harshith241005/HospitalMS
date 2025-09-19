@@ -6,6 +6,7 @@ import * as z from 'zod';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { signInWithGoogle, signInWithEmail } from '@/lib/auth';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -49,26 +50,21 @@ export default function LoginForm({ userType }: LoginFormProps) {
 
   const handleRoleBasedRedirect = (userRole: string, email: string) => {
     // Handle role-based routing based on user role from backend
-    if (userType === 'Staff') {
-        if (userRole === 'admin') {
-            router.push('/admin');
-        } else if (userRole === 'doctor') {
-            router.push('/doctor');
-        } else {
-             toast({
-                variant: 'destructive',
-                title: 'Access Denied',
-                description: "This email is not registered as staff.",
-            });
-             setIsLoading(false);
-        }
-    } else if (userRole === 'patient') {
+    switch (userRole) {
+      case 'admin':
+        router.push('/admin');
+        break;
+      case 'doctor':
+        router.push('/doctor');
+        break;
+      case 'patient':
         router.push('/dashboard');
-    } else {
+        break;
+      default:
         toast({
-            variant: 'destructive',
-            title: 'Access Denied',
-            description: "Invalid user role for this login type.",
+          variant: 'destructive',
+          title: 'Access Denied',
+          description: "Invalid user role. Please contact support.",
         });
         setIsLoading(false);
     }
@@ -80,18 +76,24 @@ export default function LoginForm({ userType }: LoginFormProps) {
     
     // Test account logic for demo purposes
     const testAccounts: { [email: string]: { role: string, route: string } } = {
-        'admin@hospital.com': { role: 'admin', route: '/admin' },
+        'harshithboyina@gmail.com': { role: 'admin', route: '/admin' },
         'doctor@hospital.com': { role: 'doctor', route: '/doctor' },
         'patient@hospital.com': { role: 'patient', route: '/dashboard' }
     };
 
-    if (testAccounts[email] && password === '12345678') {
+    // Check for demo accounts with specific passwords
+    const isDemoLogin = (email === 'harshithboyina@gmail.com' && password === 'harshith@#123') ||
+                       (email === 'doctor@hospital.com' && password === '12345678') ||
+                       (email === 'patient@hospital.com' && password === '12345678');
+
+    if (testAccounts[email] && isDemoLogin) {
       const account = testAccounts[email];
       
       // Store user info in localStorage
       localStorage.setItem('user', JSON.stringify({
         email,
         role: account.role,
+        name: email === 'harshithboyina@gmail.com' ? 'Harshith Boyina' : `Demo ${account.role}`,
         isAuthenticated: true,
         token: 'demo-token'
       }));
@@ -160,27 +162,20 @@ export default function LoginForm({ userType }: LoginFormProps) {
     setIsLoading(true);
     try {
       if (userType === 'Patient') {
-        // For demo purposes, we'll simulate a patient login
-        const mockUser = {
-          email: 'patient@hospital.com',
-          role: 'patient',
-          name: 'Demo Patient',
-          isAuthenticated: true,
-          token: 'demo-google-token'
-        };
+        // Use Firebase Google Sign In
+        const user = await signInWithGoogle();
         
-        // Store user info
-        localStorage.setItem('user', JSON.stringify(mockUser));
-        localStorage.setItem('token', mockUser.token);
-        
-        // Show success message
-        toast({
-          title: "Success!",
-          description: "Logged in successfully with Google",
-        });
-        
-        // Redirect to patient dashboard
-        router.push('/dashboard');
+        if (user) {
+          toast({
+            title: "Success!",
+            description: `Logged in successfully as ${user.name}`,
+          });
+          
+          // Redirect based on role
+          handleRoleBasedRedirect(user.role, user.email);
+        } else {
+          throw new Error('Failed to authenticate with Google');
+        }
       } else {
         // Staff cannot use Google login
         toast({
@@ -189,11 +184,11 @@ export default function LoginForm({ userType }: LoginFormProps) {
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Google Sign In Error:", error);
       toast({
         title: "Error",
-        description: "Failed to sign in with Google. Please try again.",
+        description: error.message || "Failed to sign in with Google. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -243,7 +238,7 @@ export default function LoginForm({ userType }: LoginFormProps) {
               />
             </fieldset>
             <p className="text-xs text-muted-foreground px-1">
-                For demo purposes, use emails like `patient@hospital.com`, `doctor@hospital.com`, or `admin@hospital.com` with the password `12345678`.
+                For demo: Admin: `harshithboyina@gmail.com` / `harshith@#123`, Doctor: `doctor@hospital.com` / `12345678`, Patient: `patient@hospital.com` / `12345678`.
             </p>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

@@ -1,0 +1,203 @@
+[
+  {
+    "_id": "674d5a2b8c9f1e2a3b4c5d90",
+    "name": "Rajesh Kumar",
+    "email": "admin@hms.com",
+    "password": "$2a$10$hashedpassword_admin1",
+    "role": "admin",
+    "phone": "+91-9000000001",
+    "employeeId": "EMP001",
+    "designation": "Hospital Administrator",
+    "department": "Administration",
+    "joiningDate": "2020-01-15",
+    "permissions": [
+      "user_management",
+      "doctor_management",
+      "patient_management",
+      "appointment_management",
+      "billing_management",
+      "report_generation",
+      "system_settings"
+    ],
+    "address": {
+      "street": "Banjara Hills Road No. 12",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500034"
+    },
+    "emergencyContact": {
+      "name": "Sunita Kumar",
+      "relation": "Wife",
+      "phone": "+91-9000000002"
+    },
+    "isActive": true,
+    "lastLogin": "2024-12-16T08:30:00.000Z",
+    "createdAt": "2020-01-15T09:00:00.000Z",
+    "updatedAt": "2024-12-16T08:30:00.000Z"
+  },
+  {
+    "_id": "674d5a2b8c9f1e2a3b4c5d91",
+    "name": "Priya Sharma",
+    "email": "priya.admin@hms.com",
+    "password": "$2a$10$hashedpassword_admin2",
+    "role": "admin",
+    "phone": "+91-9000000003",
+    "employeeId": "EMP002",
+    "designation": "Assistant Administrator",
+    "department": "Administration",
+    "joiningDate": "2021-03-10",
+    "permissions": [
+      "patient_management",
+      "appointment_management",
+      "billing_management",
+      "report_generation"
+    ],
+    "address": {
+      "street": "Jubilee Hills, Plot 45",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500033"
+    },
+    "emergencyContact": {
+      "name": "Amit Sharma",
+      "relation": "Husband",
+      "phone": "+91-9000000004"
+    },
+    "isActive": true,
+    "lastLogin": "2024-12-15T14:20:00.000Z",
+    "createdAt": "2021-03-10T10:30:00.000Z",
+    "updatedAt": "2024-12-15T14:20:00.000Z"
+  },
+  {
+    "_id": "674d5a2b8c9f1e2a3b4c5d92",
+    "name": "Suresh Reddy",
+    "email": "suresh.admin@hms.com",
+    "password": "$2a$10$hashedpassword_admin3",
+    "role": "admin",
+    "phone": "+91-9000000005",
+    "employeeId": "EMP003",
+    "designation": "IT Administrator",
+    "department": "Information Technology",
+    "joiningDate": "2019-08-20",
+    "permissions": [
+      "system_settings",
+      "user_management",
+      "backup_management",
+      "security_management"
+    ],
+    "address": {
+      "street": "HITEC City, Madhapur",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500081"
+    },
+    "emergencyContact": {
+      "name": "Lakshmi Reddy",
+      "relation": "Wife",
+      "phone": "+91-9000000006"
+    },
+    "isActive": true,
+    "lastLogin": "2024-12-16T09:45:00.000Z",
+    "createdAt": "2019-08-20T11:15:00.000Z",
+    "updatedAt": "2024-12-16T09:45:00.000Z"
+  },
+  {
+    "_id": "674d5a2b8c9f1e2a3b4c5d93",
+    "name": "Meera Patel",
+    "email": "meera.admin@hms.com",
+    "password": "$2a$10$hashedpassword_admin4",
+    "role": "admin",
+    "phone": "+91-9000000007",
+    "employeeId": "EMP004",
+    "designation": "Finance Administrator",
+    "department": "Finance & Accounts",
+    "joiningDate": "2020-11-05",
+    "permissions": [
+      "billing_management",
+      "financial_reports",
+      "payment_management",
+      "insurance_management"
+    ],
+    "address": {
+      "street": "Kondapur, Botanical Garden Road",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500084"
+    },
+    "emergencyContact": {
+      "name": "Rohit Patel",
+      "relation": "Husband",
+      "phone": "+91-9000000008"
+    },
+    "isActive": true,
+    "lastLogin": "2024-12-15T16:10:00.000Z",
+    "createdAt": "2020-11-05T12:45:00.000Z",
+    "updatedAt": "2024-12-15T16:10:00.000Z"
+  },
+  {
+    "_id": "674d5a2b8c9f1e2a3b4c5d94",
+    "name": "Arjun Nair",
+    "email": "arjun.admin@hms.com",
+    "password": "$2a$10$hashedpassword_admin5",
+    "role": "admin",
+    "phone": "+91-9000000009",
+    "employeeId": "EMP005",
+    "designation": "HR Administrator",
+    "department": "Human Resources",
+    "joiningDate": "2021-07-12",
+    "permissions": [
+      "staff_management",
+      "doctor_management",
+      "payroll_management",
+      "attendance_management"
+    ],
+    "address": {
+      "street": "Gachibowli, DLF Cyber City",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500032"
+    },
+    "emergencyContact": {
+      "name": "Kavya Nair",
+      "relation": "Sister",
+      "phone": "+91-9000000010"
+    },
+    "isActive": true,
+    "lastLogin": "2024-12-16T07:30:00.000Z",
+    "createdAt": "2021-07-12T13:20:00.000Z",
+    "updatedAt": "2024-12-16T07:30:00.000Z"
+  },
+  {
+    "_id": "674d5a2b8c9f1e2a3b4c5d95",
+    "name": "Deepika Singh",
+    "email": "deepika.admin@hms.com",
+    "password": "$2a$10$hashedpassword_admin6",
+    "role": "admin",
+    "phone": "+91-9000000011",
+    "employeeId": "EMP006",
+    "designation": "Quality Administrator",
+    "department": "Quality Assurance",
+    "joiningDate": "2022-02-28",
+    "permissions": [
+      "quality_management",
+      "audit_management",
+      "compliance_monitoring",
+      "report_generation"
+    ],
+    "address": {
+      "street": "Kukatpally, KPHB Colony",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500072"
+    },
+    "emergencyContact": {
+      "name": "Vikram Singh",
+      "relation": "Brother",
+      "phone": "+91-9000000012"
+    },
+    "isActive": true,
+    "lastLogin": "2024-12-15T11:50:00.000Z",
+    "createdAt": "2022-02-28T14:30:00.000Z",
+    "updatedAt": "2024-12-15T11:50:00.000Z"
+  }
+]

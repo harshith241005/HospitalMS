@@ -1,0 +1,448 @@
+[
+  {
+    "_id": "674d3a2b8c9f1e2a3b4c5d71",
+    "reportId": "RPT-2024-001",
+    "patientId": "674d1a2b8c9f1e2a3b4c5d6e",
+    "doctorId": "674d4a2b8c9f1e2a3b4c5d80",
+    "appointmentId": "674d2a2b8c9f1e2a3b4c5d6f",
+    "patientName": "Ravi Kumar Reddy",
+    "doctorName": "Dr. Aditi Sharma",
+    "reportDate": "2024-12-20",
+    "reportType": "Diagnostic Report",
+    "diagnosis": "Mild Hypertension with Cardiac Arrhythmia",
+    "symptoms": ["Chest pain", "Palpitations", "Shortness of breath"],
+    "vitalSigns": {
+      "bloodPressure": "145/92 mmHg",
+      "heartRate": "88 bpm",
+      "temperature": "98.6°F",
+      "weight": "78 kg",
+      "height": "175 cm"
+    },
+    "testResults": [
+      {
+        "testName": "ECG",
+        "result": "Mild arrhythmia detected",
+        "normalRange": "Normal sinus rhythm",
+        "status": "Abnormal"
+      },
+      {
+        "testName": "Echocardiogram",
+        "result": "Left ventricular function normal, mild mitral regurgitation",
+        "normalRange": "Normal cardiac function",
+        "status": "Mild abnormality"
+      },
+      {
+        "testName": "Blood Pressure",
+        "result": "145/92 mmHg",
+        "normalRange": "120/80 mmHg",
+        "status": "Elevated"
+      }
+    ],
+    "prescription": [
+      {
+        "medicine": "Amlodipine",
+        "dosage": "5mg",
+        "frequency": "Once daily",
+        "duration": "30 days",
+        "instructions": "Take with food in the morning"
+      },
+      {
+        "medicine": "Metoprolol",
+        "dosage": "25mg",
+        "frequency": "Twice daily",
+        "duration": "30 days",
+        "instructions": "Take with meals"
+      },
+      {
+        "medicine": "Aspirin",
+        "dosage": "75mg",
+        "frequency": "Once daily",
+        "duration": "Ongoing",
+        "instructions": "Take after dinner"
+      }
+    ],
+    "recommendations": [
+      "Regular exercise - 30 minutes daily walking",
+      "Low sodium diet (less than 2g per day)",
+      "Monitor blood pressure daily",
+      "Follow-up in 2 weeks",
+      "Avoid smoking and alcohol"
+    ],
+    "nextAppointment": "2024-12-25",
+    "status": "Final",
+    "createdAt": "2024-12-20T16:30:00.000Z",
+    "updatedAt": "2024-12-20T16:30:00.000Z"
+  },
+  {
+    "_id": "674d3a2b8c9f1e2a3b4c5d73",
+    "reportId": "RPT-2024-002",
+    "patientId": "674d1a2b8c9f1e2a3b4c5d6f",
+    "doctorId": "674d4a2b8c9f1e2a3b4c5d81",
+    "appointmentId": "674d2a2b8c9f1e2a3b4c5d72",
+    "patientName": "Priya Sharma",
+    "doctorName": "Dr. Ramesh Verma",
+    "reportDate": "2024-12-18",
+    "reportType": "Neurological Assessment",
+    "diagnosis": "Chronic Migraine with Aura",
+    "symptoms": ["Severe headaches", "Visual disturbances", "Nausea", "Light sensitivity"],
+    "vitalSigns": {
+      "bloodPressure": "118/75 mmHg",
+      "heartRate": "72 bpm",
+      "temperature": "98.4°F",
+      "weight": "58 kg",
+      "height": "162 cm"
+    },
+    "testResults": [
+      {
+        "testName": "MRI Brain",
+        "result": "No structural abnormalities detected",
+        "normalRange": "Normal brain structure",
+        "status": "Normal"
+      },
+      {
+        "testName": "Neurological Examination",
+        "result": "Normal reflexes, no focal deficits",
+        "normalRange": "Normal neurological function",
+        "status": "Normal"
+      }
+    ],
+    "prescription": [
+      {
+        "medicine": "Sumatriptan",
+        "dosage": "50mg",
+        "frequency": "As needed for migraine",
+        "duration": "PRN",
+        "instructions": "Take at onset of migraine, max 2 doses per day"
+      },
+      {
+        "medicine": "Propranolol",
+        "dosage": "40mg",
+        "frequency": "Twice daily",
+        "duration": "3 months",
+        "instructions": "Take with food for prevention"
+      }
+    ],
+    "recommendations": [
+      "Maintain regular sleep schedule",
+      "Avoid known triggers (stress, certain foods)",
+      "Stay hydrated",
+      "Consider stress management techniques",
+      "Keep a headache diary"
+    ],
+    "nextAppointment": "2025-01-15",
+    "status": "Final",
+    "createdAt": "2024-12-18T17:45:00.000Z",
+    "updatedAt": "2024-12-18T17:45:00.000Z"
+  },
+  {
+    "_id": "674d3a2b8c9f1e2a3b4c5d75",
+    "reportId": "RPT-2024-003",
+    "patientId": "674d1a2b8c9f1e2a3b4c5d70",
+    "doctorId": "674d4a2b8c9f1e2a3b4c5d83",
+    "appointmentId": "674d2a2b8c9f1e2a3b4c5d74",
+    "patientName": "Ankit Gupta",
+    "doctorName": "Dr. Vikram Singh",
+    "reportDate": "2024-12-22",
+    "reportType": "Orthopedic Assessment",
+    "diagnosis": "Lumbar Disc Degeneration (L4-L5)",
+    "symptoms": ["Lower back pain", "Stiffness", "Radiating pain to left leg"],
+    "vitalSigns": {
+      "bloodPressure": "132/84 mmHg",
+      "heartRate": "76 bpm",
+      "temperature": "98.2°F",
+      "weight": "82 kg",
+      "height": "178 cm"
+    },
+    "testResults": [
+      {
+        "testName": "Lumbar X-ray",
+        "result": "Mild disc space narrowing at L4-L5",
+        "normalRange": "Normal disc spacing",
+        "status": "Mild abnormality"
+      },
+      {
+        "testName": "Physical Examination",
+        "result": "Limited range of motion, positive straight leg raise test",
+        "normalRange": "Full range of motion",
+        "status": "Abnormal"
+      }
+    ],
+    "prescription": [
+      {
+        "medicine": "Ibuprofen",
+        "dosage": "400mg",
+        "frequency": "Three times daily",
+        "duration": "14 days",
+        "instructions": "Take with food to avoid stomach upset"
+      },
+      {
+        "medicine": "Muscle relaxant (Cyclobenzaprine)",
+        "dosage": "10mg",
+        "frequency": "At bedtime",
+        "duration": "7 days",
+        "instructions": "May cause drowsiness"
+      }
+    ],
+    "recommendations": [
+      "Physiotherapy sessions - 3 times per week",
+      "Avoid heavy lifting",
+      "Apply heat/cold therapy",
+      "Maintain proper posture",
+      "Core strengthening exercises"
+    ],
+    "nextAppointment": "2025-01-05",
+    "status": "Final",
+    "createdAt": "2024-12-22T18:20:00.000Z",
+    "updatedAt": "2024-12-22T18:20:00.000Z"
+  },
+  {
+    "_id": "674d3a2b8c9f1e2a3b4c5d77",
+    "reportId": "RPT-2024-004",
+    "patientId": "674d1a2b8c9f1e2a3b4c5d71",
+    "doctorId": "674d4a2b8c9f1e2a3b4c5d82",
+    "appointmentId": "674d2a2b8c9f1e2a3b4c5d76",
+    "patientName": "Sanya Malhotra",
+    "doctorName": "Dr. Sneha Kapoor",
+    "reportDate": "2024-12-19",
+    "reportType": "Pediatric Checkup Report",
+    "diagnosis": "Normal Growth and Development",
+    "symptoms": [],
+    "vitalSigns": {
+      "bloodPressure": "95/60 mmHg",
+      "heartRate": "100 bpm",
+      "temperature": "98.6°F",
+      "weight": "20 kg",
+      "height": "115 cm"
+    },
+    "testResults": [
+      {
+        "testName": "Growth Assessment",
+        "result": "Height and weight in 75th percentile",
+        "normalRange": "10th-90th percentile",
+        "status": "Normal"
+      },
+      {
+        "testName": "Developmental Milestones",
+        "result": "Age-appropriate development",
+        "normalRange": "Age-appropriate",
+        "status": "Normal"
+      }
+    ],
+    "prescription": [
+      {
+        "medicine": "Multivitamin (Pediatric)",
+        "dosage": "5ml",
+        "frequency": "Once daily",
+        "duration": "Ongoing",
+        "instructions": "Take with breakfast"
+      }
+    ],
+    "recommendations": [
+      "Continue balanced diet with fruits and vegetables",
+      "Regular outdoor play and exercise",
+      "Maintain good hygiene habits",
+      "Next vaccination due in 6 months",
+      "Regular dental checkups"
+    ],
+    "nextAppointment": "2025-06-19",
+    "status": "Final",
+    "createdAt": "2024-12-19T12:30:00.000Z",
+    "updatedAt": "2024-12-19T12:30:00.000Z"
+  },
+  {
+    "_id": "674d3a2b8c9f1e2a3b4c5d79",
+    "reportId": "RPT-2024-005",
+    "patientId": "674d1a2b8c9f1e2a3b4c5d72",
+    "doctorId": "674d4a2b8c9f1e2a3b4c5d83",
+    "appointmentId": "674d2a2b8c9f1e2a3b4c5d78",
+    "patientName": "Vikash Yadav",
+    "doctorName": "Dr. Vikram Singh",
+    "reportDate": "2024-12-21",
+    "reportType": "Post-Surgical Follow-up",
+    "diagnosis": "Healing Tibial Fracture - Good Progress",
+    "symptoms": ["Mild pain", "Occasional swelling"],
+    "vitalSigns": {
+      "bloodPressure": "128/82 mmHg",
+      "heartRate": "74 bpm",
+      "temperature": "98.4°F",
+      "weight": "75 kg",
+      "height": "172 cm"
+    },
+    "testResults": [
+      {
+        "testName": "X-ray Follow-up",
+        "result": "Callus formation visible, good bone healing",
+        "normalRange": "Progressive healing",
+        "status": "Good progress"
+      },
+      {
+        "testName": "Range of Motion",
+        "result": "80% of normal range achieved",
+        "normalRange": "Full range of motion",
+        "status": "Improving"
+      }
+    ],
+    "prescription": [
+      {
+        "medicine": "Calcium + Vitamin D3",
+        "dosage": "500mg + 250 IU",
+        "frequency": "Twice daily",
+        "duration": "3 months",
+        "instructions": "Take with meals"
+      },
+      {
+        "medicine": "Paracetamol",
+        "dosage": "500mg",
+        "frequency": "As needed for pain",
+        "duration": "PRN",
+        "instructions": "Maximum 4 times per day"
+      }
+    ],
+    "recommendations": [
+      "Continue physiotherapy sessions",
+      "Gradual weight bearing as tolerated",
+      "Avoid high-impact activities for 6 weeks",
+      "Ice application for swelling",
+      "Follow-up X-ray in 4 weeks"
+    ],
+    "nextAppointment": "2025-01-18",
+    "status": "Final",
+    "createdAt": "2024-12-21T19:15:00.000Z",
+    "updatedAt": "2024-12-21T19:15:00.000Z"
+  },
+  {
+    "_id": "674d3a2b8c9f1e2a3b4c5d7b",
+    "reportId": "RPT-2024-006",
+    "patientId": "674d1a2b8c9f1e2a3b4c5d73",
+    "doctorId": "674d4a2b8c9f1e2a3b4c5d85",
+    "appointmentId": "674d2a2b8c9f1e2a3b4c5d7a",
+    "patientName": "Neha Patel",
+    "doctorName": "Dr. Arjun Nair",
+    "reportDate": "2024-12-23",
+    "reportType": "Dermatological Assessment",
+    "diagnosis": "Contact Dermatitis - Allergic Reaction",
+    "symptoms": ["Skin rash", "Itching", "Redness", "Localized swelling"],
+    "vitalSigns": {
+      "bloodPressure": "115/72 mmHg",
+      "heartRate": "68 bpm",
+      "temperature": "98.8°F",
+      "weight": "62 kg",
+      "height": "165 cm"
+    },
+    "testResults": [
+      {
+        "testName": "Patch Test",
+        "result": "Positive reaction to nickel and latex",
+        "normalRange": "No allergic reactions",
+        "status": "Positive"
+      },
+      {
+        "testName": "Skin Examination",
+        "result": "Eczematous changes on forearms and hands",
+        "normalRange": "Normal skin appearance",
+        "status": "Abnormal"
+      }
+    ],
+    "prescription": [
+      {
+        "medicine": "Topical Corticosteroid (Betamethasone)",
+        "dosage": "0.1% cream",
+        "frequency": "Twice daily",
+        "duration": "14 days",
+        "instructions": "Apply thin layer to affected areas"
+      },
+      {
+        "medicine": "Antihistamine (Cetirizine)",
+        "dosage": "10mg",
+        "frequency": "Once daily",
+        "duration": "10 days",
+        "instructions": "Take at bedtime"
+      },
+      {
+        "medicine": "Moisturizer",
+        "dosage": "As needed",
+        "frequency": "Multiple times daily",
+        "duration": "Ongoing",
+        "instructions": "Apply to keep skin hydrated"
+      }
+    ],
+    "recommendations": [
+      "Avoid contact with identified allergens (nickel, latex)",
+      "Use hypoallergenic products",
+      "Wear protective gloves when necessary",
+      "Keep skin moisturized",
+      "Follow-up if symptoms persist"
+    ],
+    "nextAppointment": "2025-01-06",
+    "status": "Final",
+    "createdAt": "2024-12-23T16:45:00.000Z",
+    "updatedAt": "2024-12-23T16:45:00.000Z"
+  },
+  {
+    "_id": "674d3a2b8c9f1e2a3b4c5d7e",
+    "reportId": "RPT-2024-007",
+    "patientId": "674d1a2b8c9f1e2a3b4c5d75",
+    "doctorId": "674d4a2b8c9f1e2a3b4c5d84",
+    "appointmentId": "674d2a2b8c9f1e2a3b4c5d7d",
+    "patientName": "Deepika Nair",
+    "doctorName": "Dr. Meera Joshi",
+    "reportDate": "2024-12-26",
+    "reportType": "Prenatal Checkup Report",
+    "diagnosis": "Normal Pregnancy - 24 weeks gestation",
+    "symptoms": [],
+    "vitalSigns": {
+      "bloodPressure": "110/70 mmHg",
+      "heartRate": "78 bpm",
+      "temperature": "98.6°F",
+      "weight": "68 kg (pre-pregnancy: 58 kg)",
+      "height": "160 cm"
+    },
+    "testResults": [
+      {
+        "testName": "Ultrasound",
+        "result": "Fetal growth appropriate for gestational age, normal anatomy",
+        "normalRange": "Normal fetal development",
+        "status": "Normal"
+      },
+      {
+        "testName": "Glucose Tolerance Test",
+        "result": "145 mg/dL (1 hour post-glucose)",
+        "normalRange": "< 140 mg/dL",
+        "status": "Borderline elevated"
+      },
+      {
+        "testName": "Hemoglobin",
+        "result": "11.2 g/dL",
+        "normalRange": "11.0-14.0 g/dL",
+        "status": "Normal"
+      }
+    ],
+    "prescription": [
+      {
+        "medicine": "Prenatal Vitamins",
+        "dosage": "1 tablet",
+        "frequency": "Once daily",
+        "duration": "Throughout pregnancy",
+        "instructions": "Take with food"
+      },
+      {
+        "medicine": "Iron Supplement",
+        "dosage": "65mg",
+        "frequency": "Once daily",
+        "duration": "Remainder of pregnancy",
+        "instructions": "Take with vitamin C for better absorption"
+      }
+    ],
+    "recommendations": [
+      "Follow diabetic diet due to borderline glucose test",
+      "Monitor blood sugar levels",
+      "Continue regular prenatal vitamins",
+      "Moderate exercise as tolerated",
+      "Next appointment in 4 weeks"
+    ],
+    "nextAppointment": "2025-01-23",
+    "status": "Final",
+    "createdAt": "2024-12-26T14:30:00.000Z",
+    "updatedAt": "2024-12-26T14:30:00.000Z"
+  }
+]

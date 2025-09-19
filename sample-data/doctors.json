@@ -1,0 +1,240 @@
+[
+  {
+    "_id": "674d4a2b8c9f1e2a3b4c5d80",
+    "name": "Dr. Aditi Sharma",
+    "email": "aditi.sharma@hms.com",
+    "password": "$2a$10$hashedpassword_doc1",
+    "role": "doctor",
+    "phone": "+91-9876543210",
+    "specialization": "Cardiology",
+    "department": "Cardiology",
+    "experience": 12,
+    "qualification": "MBBS, MD (Cardiology), DM (Interventional Cardiology)",
+    "licenseNumber": "MCI-12345-AP",
+    "consultationFee": 800,
+    "availability": {
+      "days": ["Monday", "Tuesday", "Wednesday", "Friday"],
+      "timeSlots": [
+        { "start": "10:00", "end": "14:00" },
+        { "start": "16:00", "end": "18:00" }
+      ]
+    },
+    "address": {
+      "clinic": "Apollo Hospitals",
+      "street": "Jubilee Hills",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500033"
+    },
+    "patientsAssigned": ["674d1a2b8c9f1e2a3b4c5d6e", "674d1a2b8c9f1e2a3b4c5d72"],
+    "totalAppointments": 156,
+    "rating": 4.8,
+    "languages": ["English", "Hindi", "Telugu"],
+    "createdAt": "2024-01-15T09:00:00.000Z",
+    "updatedAt": "2024-12-16T10:30:00.000Z"
+  },
+  {
+    "_id": "674d4a2b8c9f1e2a3b4c5d81",
+    "name": "Dr. Ramesh Verma",
+    "email": "ramesh.verma@hms.com",
+    "password": "$2a$10$hashedpassword_doc2",
+    "role": "doctor",
+    "phone": "+91-9812345678",
+    "specialization": "Neurology",
+    "department": "Neurology",
+    "experience": 15,
+    "qualification": "MBBS, MD (Medicine), DM (Neurology)",
+    "licenseNumber": "MCI-23456-TG",
+    "consultationFee": 900,
+    "availability": {
+      "days": ["Tuesday", "Thursday", "Saturday"],
+      "timeSlots": [
+        { "start": "11:00", "end": "15:00" },
+        { "start": "17:00", "end": "19:00" }
+      ]
+    },
+    "address": {
+      "clinic": "KIMS Hospital",
+      "street": "Kondapur",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500084"
+    },
+    "patientsAssigned": ["674d1a2b8c9f1e2a3b4c5d6f"],
+    "totalAppointments": 203,
+    "rating": 4.9,
+    "languages": ["English", "Hindi", "Telugu", "Tamil"],
+    "createdAt": "2024-02-01T08:30:00.000Z",
+    "updatedAt": "2024-12-15T14:45:00.000Z"
+  },
+  {
+    "_id": "674d4a2b8c9f1e2a3b4c5d82",
+    "name": "Dr. Sneha Kapoor",
+    "email": "sneha.kapoor@hms.com",
+    "password": "$2a$10$hashedpassword_doc3",
+    "role": "doctor",
+    "phone": "+91-9123456789",
+    "specialization": "Pediatrics",
+    "department": "Pediatrics",
+    "experience": 8,
+    "qualification": "MBBS, MD (Pediatrics), Fellowship in Pediatric Cardiology",
+    "licenseNumber": "MCI-34567-TG",
+    "consultationFee": 600,
+    "availability": {
+      "days": ["Monday", "Wednesday", "Friday", "Saturday"],
+      "timeSlots": [
+        { "start": "09:00", "end": "13:00" },
+        { "start": "15:00", "end": "17:00" }
+      ]
+    },
+    "address": {
+      "clinic": "Rainbow Children's Hospital",
+      "street": "Banjara Hills",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500034"
+    },
+    "patientsAssigned": ["674d1a2b8c9f1e2a3b4c5d71"],
+    "totalAppointments": 89,
+    "rating": 4.7,
+    "languages": ["English", "Hindi", "Telugu"],
+    "createdAt": "2024-03-10T10:15:00.000Z",
+    "updatedAt": "2024-12-14T16:20:00.000Z"
+  },
+  {
+    "_id": "674d4a2b8c9f1e2a3b4c5d83",
+    "name": "Dr. Vikram Singh",
+    "email": "vikram.singh@hms.com",
+    "password": "$2a$10$hashedpassword_doc4",
+    "role": "doctor",
+    "phone": "+91-9988776655",
+    "specialization": "Orthopedic Surgery",
+    "department": "Orthopedics",
+    "experience": 10,
+    "qualification": "MBBS, MS (Orthopedics), MCh (Spine Surgery)",
+    "licenseNumber": "MCI-45678-AP",
+    "consultationFee": 1000,
+    "availability": {
+      "days": ["Monday", "Tuesday", "Thursday", "Saturday"],
+      "timeSlots": [
+        { "start": "14:00", "end": "18:00" },
+        { "start": "19:00", "end": "20:00" }
+      ]
+    },
+    "address": {
+      "clinic": "Yashoda Hospitals",
+      "street": "Somajiguda",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500082"
+    },
+    "patientsAssigned": ["674d1a2b8c9f1e2a3b4c5d72", "674d1a2b8c9f1e2a3b4c5d74"],
+    "totalAppointments": 134,
+    "rating": 4.6,
+    "languages": ["English", "Hindi", "Punjabi"],
+    "createdAt": "2024-01-20T11:45:00.000Z",
+    "updatedAt": "2024-12-16T09:10:00.000Z"
+  },
+  {
+    "_id": "674d4a2b8c9f1e2a3b4c5d84",
+    "name": "Dr. Meera Joshi",
+    "email": "meera.joshi@hms.com",
+    "password": "$2a$10$hashedpassword_doc5",
+    "role": "doctor",
+    "phone": "+91-9871203456",
+    "specialization": "Obstetrics & Gynecology",
+    "department": "Gynecology",
+    "experience": 14,
+    "qualification": "MBBS, MS (Obstetrics & Gynecology), Fellowship in Reproductive Medicine",
+    "licenseNumber": "MCI-56789-TG",
+    "consultationFee": 750,
+    "availability": {
+      "days": ["Monday", "Wednesday", "Thursday", "Saturday"],
+      "timeSlots": [
+        { "start": "10:00", "end": "14:00" },
+        { "start": "16:00", "end": "18:00" }
+      ]
+    },
+    "address": {
+      "clinic": "Fernandez Hospital",
+      "street": "Bogulkunta",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500001"
+    },
+    "patientsAssigned": ["674d1a2b8c9f1e2a3b4c5d75"],
+    "totalAppointments": 178,
+    "rating": 4.9,
+    "languages": ["English", "Hindi", "Telugu", "Marathi"],
+    "createdAt": "2024-02-15T12:30:00.000Z",
+    "updatedAt": "2024-12-15T13:55:00.000Z"
+  },
+  {
+    "_id": "674d4a2b8c9f1e2a3b4c5d85",
+    "name": "Dr. Arjun Nair",
+    "email": "arjun.nair@hms.com",
+    "password": "$2a$10$hashedpassword_doc6",
+    "role": "doctor",
+    "phone": "+91-9765432109",
+    "specialization": "Dermatology",
+    "department": "Dermatology",
+    "experience": 7,
+    "qualification": "MBBS, MD (Dermatology), Fellowship in Cosmetic Dermatology",
+    "licenseNumber": "MCI-67890-KL",
+    "consultationFee": 650,
+    "availability": {
+      "days": ["Tuesday", "Wednesday", "Friday", "Sunday"],
+      "timeSlots": [
+        { "start": "13:00", "end": "17:00" },
+        { "start": "18:00", "end": "19:30" }
+      ]
+    },
+    "address": {
+      "clinic": "Care Hospitals",
+      "street": "Banjara Hills",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500034"
+    },
+    "patientsAssigned": ["674d1a2b8c9f1e2a3b4c5d73"],
+    "totalAppointments": 67,
+    "rating": 4.5,
+    "languages": ["English", "Hindi", "Malayalam", "Tamil"],
+    "createdAt": "2024-04-05T14:20:00.000Z",
+    "updatedAt": "2024-12-13T17:40:00.000Z"
+  },
+  {
+    "_id": "674d4a2b8c9f1e2a3b4c5d86",
+    "name": "Dr. Kavitha Reddy",
+    "email": "kavitha.reddy@hms.com",
+    "password": "$2a$10$hashedpassword_doc7",
+    "role": "doctor",
+    "phone": "+91-9334455667",
+    "specialization": "Psychiatry",
+    "department": "Mental Health",
+    "experience": 11,
+    "qualification": "MBBS, MD (Psychiatry), Fellowship in Child & Adolescent Psychiatry",
+    "licenseNumber": "MCI-78901-AP",
+    "consultationFee": 700,
+    "availability": {
+      "days": ["Monday", "Tuesday", "Thursday", "Friday"],
+      "timeSlots": [
+        { "start": "09:00", "end": "13:00" },
+        { "start": "15:00", "end": "18:00" }
+      ]
+    },
+    "address": {
+      "clinic": "Asha Hospital",
+      "street": "Secunderabad",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500003"
+    },
+    "patientsAssigned": ["674d1a2b8c9f1e2a3b4c5d6f"],
+    "totalAppointments": 112,
+    "rating": 4.8,
+    "languages": ["English", "Hindi", "Telugu"],
+    "createdAt": "2024-03-22T15:10:00.000Z",
+    "updatedAt": "2024-12-14T11:25:00.000Z"
+  }
+]

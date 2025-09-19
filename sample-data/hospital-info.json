@@ -1,0 +1,340 @@
+{
+  "hospitalInfo": {
+    "name": "Apollo Hospitals Hyderabad",
+    "establishedYear": 1988,
+    "location": {
+      "address": "Jubilee Hills, Hyderabad",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "pincode": "500033",
+      "country": "India"
+    },
+    "contact": {
+      "phone": "+91-40-2355-1066",
+      "emergency": "+91-40-2355-1234",
+      "email": "info@apollohospitals.com",
+      "website": "www.apollohospitals.com"
+    },
+    "capacity": {
+      "totalBeds": 750,
+      "icuBeds": 120,
+      "emergencyBeds": 50,
+      "operationTheaters": 25,
+      "totalDoctors": 180,
+      "totalStaff": 1200,
+      "totalPatients": 15000
+    },
+    "accreditation": ["JCI", "NABH", "NABL", "ISO 9001:2015"],
+    "awards": [
+      "Best Multi-Specialty Hospital 2023",
+      "Excellence in Healthcare 2022",
+      "Patient Safety Award 2023"
+    ]
+  },
+  "departments": [
+    {
+      "id": "DEPT001",
+      "name": "Cardiology",
+      "head": "Dr. Aditi Sharma",
+      "totalDoctors": 12,
+      "totalBeds": 80,
+      "services": [
+        "Cardiac Catheterization",
+        "Angioplasty",
+        "Bypass Surgery",
+        "Pacemaker Implantation",
+        "Heart Transplant"
+      ],
+      "equipment": ["Cath Lab", "Echo Machine", "Stress Test Unit", "Holter Monitor"],
+      "location": "Block A, 3rd Floor",
+      "emergencyAvailable": true
+    },
+    {
+      "id": "DEPT002",
+      "name": "Neurology",
+      "head": "Dr. Ramesh Verma",
+      "totalDoctors": 8,
+      "totalBeds": 60,
+      "services": [
+        "Stroke Treatment",
+        "Epilepsy Management",
+        "Brain Surgery",
+        "Spinal Surgery",
+        "Neurological Rehabilitation"
+      ],
+      "equipment": ["MRI", "CT Scan", "EEG Machine", "EMG Unit"],
+      "location": "Block B, 2nd Floor",
+      "emergencyAvailable": true
+    },
+    {
+      "id": "DEPT003",
+      "name": "Pediatrics",
+      "head": "Dr. Sneha Kapoor",
+      "totalDoctors": 15,
+      "totalBeds": 100,
+      "services": [
+        "Neonatal Care",
+        "Pediatric Surgery",
+        "Vaccination",
+        "Growth Monitoring",
+        "Pediatric Emergency"
+      ],
+      "equipment": ["Incubators", "Pediatric Ventilators", "Phototherapy Units"],
+      "location": "Block C, 1st Floor",
+      "emergencyAvailable": true
+    },
+    {
+      "id": "DEPT004",
+      "name": "Orthopedics",
+      "head": "Dr. Vikram Singh",
+      "totalDoctors": 10,
+      "totalBeds": 70,
+      "services": [
+        "Joint Replacement",
+        "Fracture Treatment",
+        "Spine Surgery",
+        "Sports Medicine",
+        "Arthroscopy"
+      ],
+      "equipment": ["C-Arm", "Arthroscope", "Bone Densitometer"],
+      "location": "Block D, 2nd Floor",
+      "emergencyAvailable": true
+    },
+    {
+      "id": "DEPT005",
+      "name": "Obstetrics & Gynecology",
+      "head": "Dr. Meera Joshi",
+      "totalDoctors": 12,
+      "totalBeds": 90,
+      "services": [
+        "Maternity Care",
+        "Gynecological Surgery",
+        "Fertility Treatment",
+        "High-Risk Pregnancy",
+        "Menopause Management"
+      ],
+      "equipment": ["Ultrasound", "Fetal Monitor", "Laparoscope"],
+      "location": "Block E, 1st & 2nd Floor",
+      "emergencyAvailable": true
+    },
+    {
+      "id": "DEPT006",
+      "name": "Dermatology",
+      "head": "Dr. Arjun Nair",
+      "totalDoctors": 6,
+      "totalBeds": 30,
+      "services": [
+        "Skin Cancer Treatment",
+        "Cosmetic Dermatology",
+        "Allergy Testing",
+        "Laser Therapy",
+        "Dermatological Surgery"
+      ],
+      "equipment": ["Laser Units", "Dermoscope", "Patch Test Kit"],
+      "location": "Block F, Ground Floor",
+      "emergencyAvailable": false
+    },
+    {
+      "id": "DEPT007",
+      "name": "Psychiatry",
+      "head": "Dr. Kavitha Reddy",
+      "totalDoctors": 5,
+      "totalBeds": 40,
+      "services": [
+        "Mental Health Assessment",
+        "Counseling",
+        "Addiction Treatment",
+        "Child Psychology",
+        "Psychiatric Emergency"
+      ],
+      "equipment": ["EEG", "Biofeedback Equipment"],
+      "location": "Block G, 1st Floor",
+      "emergencyAvailable": true
+    },
+    {
+      "id": "DEPT008",
+      "name": "Emergency Medicine",
+      "head": "Dr. Rajesh Kumar",
+      "totalDoctors": 20,
+      "totalBeds": 50,
+      "services": [
+        "24/7 Emergency Care",
+        "Trauma Management",
+        "Critical Care",
+        "Ambulance Service",
+        "Poison Control"
+      ],
+      "equipment": ["Defibrillators", "Ventilators", "Crash Carts", "Ambulances"],
+      "location": "Ground Floor",
+      "emergencyAvailable": true
+    }
+  ],
+  "rooms": [
+    {
+      "roomNumber": "101",
+      "type": "General Ward",
+      "department": "Cardiology",
+      "capacity": 4,
+      "currentOccupancy": 3,
+      "status": "Available",
+      "amenities": ["AC", "TV", "Attached Bathroom"],
+      "dailyRate": 2500
+    },
+    {
+      "roomNumber": "201",
+      "type": "Private Room",
+      "department": "Neurology",
+      "capacity": 1,
+      "currentOccupancy": 1,
+      "status": "Occupied",
+      "amenities": ["AC", "TV", "Attached Bathroom", "Refrigerator", "Sofa"],
+      "dailyRate": 5000
+    },
+    {
+      "roomNumber": "301",
+      "type": "ICU",
+      "department": "Critical Care",
+      "capacity": 1,
+      "currentOccupancy": 0,
+      "status": "Available",
+      "amenities": ["Ventilator", "Cardiac Monitor", "Defibrillator"],
+      "dailyRate": 8000
+    },
+    {
+      "roomNumber": "401",
+      "type": "Operation Theater",
+      "department": "Surgery",
+      "capacity": 1,
+      "currentOccupancy": 0,
+      "status": "Available",
+      "amenities": ["Surgical Equipment", "Anesthesia Machine", "Monitors"],
+      "dailyRate": 15000
+    },
+    {
+      "roomNumber": "501",
+      "type": "Maternity Room",
+      "department": "Obstetrics & Gynecology",
+      "capacity": 1,
+      "currentOccupancy": 0,
+      "status": "Available",
+      "amenities": ["Delivery Bed", "Baby Warmer", "Fetal Monitor"],
+      "dailyRate": 6000
+    },
+    {
+      "roomNumber": "601",
+      "type": "Pediatric Ward",
+      "department": "Pediatrics",
+      "capacity": 6,
+      "currentOccupancy": 4,
+      "status": "Available",
+      "amenities": ["Child-friendly Decor", "Play Area", "Parent Accommodation"],
+      "dailyRate": 3000
+    },
+    {
+      "roomNumber": "701",
+      "type": "Deluxe Suite",
+      "department": "VIP",
+      "capacity": 1,
+      "currentOccupancy": 1,
+      "status": "Occupied",
+      "amenities": ["Living Room", "Kitchenette", "Butler Service", "Wi-Fi"],
+      "dailyRate": 12000
+    },
+    {
+      "roomNumber": "801",
+      "type": "Isolation Room",
+      "department": "Infectious Diseases",
+      "capacity": 1,
+      "currentOccupancy": 0,
+      "status": "Available",
+      "amenities": ["Negative Pressure", "HEPA Filter", "Intercom"],
+      "dailyRate": 7000
+    }
+  ],
+  "services": [
+    {
+      "id": "SRV001",
+      "name": "Emergency Care",
+      "description": "24/7 emergency medical services",
+      "available": true,
+      "cost": 1500,
+      "department": "Emergency Medicine"
+    },
+    {
+      "id": "SRV002",
+      "name": "Pharmacy",
+      "description": "24/7 in-house pharmacy with all medications",
+      "available": true,
+      "cost": 0,
+      "department": "Pharmacy"
+    },
+    {
+      "id": "SRV003",
+      "name": "Ambulance Service",
+      "description": "Emergency ambulance with paramedic support",
+      "available": true,
+      "cost": 2000,
+      "department": "Emergency Medicine"
+    },
+    {
+      "id": "SRV004",
+      "name": "Diagnostic Lab",
+      "description": "Complete pathology and radiology services",
+      "available": true,
+      "cost": 500,
+      "department": "Pathology"
+    },
+    {
+      "id": "SRV005",
+      "name": "Blood Bank",
+      "description": "24/7 blood bank with all blood types",
+      "available": true,
+      "cost": 1200,
+      "department": "Blood Bank"
+    },
+    {
+      "id": "SRV006",
+      "name": "Vaccination Center",
+      "description": "All routine and travel vaccinations",
+      "available": true,
+      "cost": 300,
+      "department": "Preventive Medicine"
+    },
+    {
+      "id": "SRV007",
+      "name": "Physiotherapy",
+      "description": "Rehabilitation and physiotherapy services",
+      "available": true,
+      "cost": 800,
+      "department": "Rehabilitation"
+    },
+    {
+      "id": "SRV008",
+      "name": "Cafeteria",
+      "description": "24/7 cafeteria with healthy meal options",
+      "available": true,
+      "cost": 200,
+      "department": "Food Services"
+    }
+  ],
+  "facilities": [
+    "Free Wi-Fi throughout hospital",
+    "Parking facility for 500+ vehicles",
+    "ATM and banking services",
+    "Chapel and prayer room",
+    "Gift shop and florist",
+    "Patient transport services",
+    "Medical records department",
+    "Insurance desk",
+    "International patient services",
+    "Telemedicine facility"
+  ],
+  "operatingHours": {
+    "emergency": "24/7",
+    "outpatient": "8:00 AM - 8:00 PM",
+    "pharmacy": "24/7",
+    "lab": "24/7",
+    "cafeteria": "24/7",
+    "administration": "9:00 AM - 6:00 PM"
+  }
+}

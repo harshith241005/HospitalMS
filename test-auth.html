@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HMS Authentication Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { margin: 5px; padding: 10px 15px; cursor: pointer; }
+        input { margin: 5px; padding: 8px; width: 250px; }
+        #results { margin-top: 20px; padding: 10px; background: #f5f5f5; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🏥 HMS Authentication Test</h1>
+    
+    <div class="test-section">
+        <h3>1. Backend API Test</h3>
+        <button onclick="testBackendAPI()">Test Backend Connection</button>
+        <div id="backend-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. Admin Login Test</h3>
+        <input type="email" id="admin-email" placeholder="Admin Email" value="harshithboyina@gmail.com">
+        <input type="password" id="admin-password" placeholder="Admin Password" value="harshith@#123">
+        <button onclick="testAdminLogin()">Test Admin Login</button>
+        <div id="admin-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. Doctor Login Test</h3>
+        <input type="email" id="doctor-email" placeholder="Doctor Email" value="aditi.sharma@hms.com">
+        <input type="password" id="doctor-password" placeholder="Doctor Password" value="doctor123">
+        <button onclick="testDoctorLogin()">Test Doctor Login</button>
+        <div id="doctor-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. Patient Login Test</h3>
+        <input type="email" id="patient-email" placeholder="Patient Email" value="ravi.kumar@example.com">
+        <input type="password" id="patient-password" placeholder="Patient Password" value="password123">
+        <button onclick="testPatientLogin()">Test Patient Login</button>
+        <div id="patient-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>5. Firebase Check User Test</h3>
+        <input type="email" id="check-email" placeholder="Email to Check" value="harshithboyina@gmail.com">
+        <button onclick="testCheckUser()">Check User in Backend</button>
+        <div id="check-result"></div>
+    </div>
+    
+    <div id="results">
+        <h3>Test Results:</h3>
+        <div id="test-log"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        
+        function log(message, type = 'info') {
+            const testLog = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            testLog.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+        }
+        
+        async function testBackendAPI() {
+            const resultDiv = document.getElementById('backend-result');
+            try {
+                const response = await fetch(`${API_BASE}/../`);
+                const text = await response.text();
+                resultDiv.innerHTML = `<span class="success">✅ Backend Connected: ${text}</span>`;
+                log('Backend API connection successful', 'success');
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Backend Error: ${error.message}</span>`;
+                log(`Backend API connection failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAdminLogin() {
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            const resultDiv = document.getElementById('admin-result');
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<span class="success">✅ Admin Login Success: ${data.user.name} (${data.user.role})</span>`;
+                    log(`Admin login successful: ${data.user.name}`, 'success');
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ Admin Login Failed: ${data.message}</span>`;
+                    log(`Admin login failed: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Network Error: ${error.message}</span>`;
+                log(`Admin login network error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testDoctorLogin() {
+            const email = document.getElementById('doctor-email').value;
+            const password = document.getElementById('doctor-password').value;
+            const resultDiv = document.getElementById('doctor-result');
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<span class="success">✅ Doctor Login Success: ${data.user.name} (${data.user.role})</span>`;
+                    log(`Doctor login successful: ${data.user.name}`, 'success');
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ Doctor Login Failed: ${data.message}</span>`;
+                    log(`Doctor login failed: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Network Error: ${error.message}</span>`;
+                log(`Doctor login network error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testPatientLogin() {
+            const email = document.getElementById('patient-email').value;
+            const password = document.getElementById('patient-password').value;
+            const resultDiv = document.getElementById('patient-result');
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<span class="success">✅ Patient Login Success: ${data.user.name} (${data.user.role})</span>`;
+                    log(`Patient login successful: ${data.user.name}`, 'success');
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ Patient Login Failed: ${data.message}</span>`;
+                    log(`Patient login failed: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Network Error: ${error.message}</span>`;
+                log(`Patient login network error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testCheckUser() {
+            const email = document.getElementById('check-email').value;
+            const resultDiv = document.getElementById('check-result');
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/check-user`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<span class="success">✅ User Found: ${data.name} (${data.role})</span>`;
+                    log(`User check successful: ${data.name} (${data.role})`, 'success');
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ User Not Found: ${data.message}</span>`;
+                    log(`User check failed: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Network Error: ${error.message}</span>`;
+                log(`User check network error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-run backend test on page load
+        window.onload = function() {
+            log('HMS Authentication Test Started', 'info');
+            testBackendAPI();
+        };
+    </script>
+</body>
+</html>
