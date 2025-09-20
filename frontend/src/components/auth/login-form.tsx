@@ -50,17 +50,23 @@ export default function LoginForm({ userType }: LoginFormProps) {
 
   const handleRoleBasedRedirect = (userRole: string, email: string) => {
     // Handle role-based routing based on user role from backend
+    console.log('Redirecting user with role:', userRole);
+    
     switch (userRole) {
       case 'admin':
-        router.push('/admin');
+        console.log('Redirecting to /admin');
+        window.location.href = '/admin';
         break;
       case 'doctor':
-        router.push('/doctor');
+        console.log('Redirecting to /doctor');
+        window.location.href = '/doctor';
         break;
       case 'patient':
-        router.push('/dashboard');
+        console.log('Redirecting to /dashboard');
+        window.location.href = '/dashboard';
         break;
       default:
+        console.log('Invalid role:', userRole);
         toast({
           variant: 'destructive',
           title: 'Access Denied',
@@ -103,8 +109,12 @@ export default function LoginForm({ userType }: LoginFormProps) {
         description: `Logged in successfully as ${account.role}`,
       });
       
-      // Redirect to appropriate dashboard
-      router.push(account.route);
+      // Use window.location.href for more reliable redirection
+      console.log('Demo login successful, redirecting to:', account.route);
+      setTimeout(() => {
+        window.location.href = account.route;
+      }, 1000);
+      
       setIsLoading(false);
       return;
     }
